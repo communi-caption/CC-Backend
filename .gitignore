@@ -1,0 +1,6 @@
+.vs
+bin
+database/*
+obj
+raw-exam/*
+deploy
