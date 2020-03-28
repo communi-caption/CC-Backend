@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using CommunicaptionBackend.Core;
 using CommunicaptionBackend.Wrappers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,6 +16,12 @@ namespace CommunicaptionBackend.Controllers
     public class UserController : Controller
     {
         private Guid guidPin;
+        private MessageProcessor messageProcessor;
+
+        public UserController(MessageProcessor messageProcessor)
+        {
+            this.messageProcessor = messageProcessor;
+        }
 
         [HttpGet("pin")]
         public IActionResult GeneratePin()
@@ -36,11 +43,21 @@ namespace CommunicaptionBackend.Controllers
             {
                 UserId = userId,
                 MediaId = mediaId
- 
             };
             result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
 
             return result;
+        }
+
+        [HttpPost("pushMessage/{userId}")]
+        public IActionResult PushMessage(string userId, Message message)
+        {
+            messageProcessor.PushMessage(userId, message);
+
+            return ActionResults.Json(new
+            {
+                message = "Pushed Message."
+            });
         }
     }
 }
