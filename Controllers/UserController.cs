@@ -59,5 +59,31 @@ namespace CommunicaptionBackend.Controllers
                 message = "Pushed Message."
             });
         }
+
+        [HttpPost("disconnectDevice/{userId}")]
+        public IActionResult DisconnectDevice(string userId)
+        {
+            //For the given userId, the match record in the database is removed.
+
+            return ActionResults.Json(new
+            {
+                message = "Device Disconnected."
+            });
+        }
+
+        [HttpGet("checkPairing/{pin}")]
+        public HttpResponseMessage CheckForPairing(string pin)
+        {
+            string userId = null;
+
+            //The userId value of the record matching the pin on database is returned.
+
+            var result = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(userId)
+            };
+            return result;
+        }
+
     }
 }
