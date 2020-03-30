@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Threading.Tasks;
 using CommunicaptionBackend.Contexts;
 using CommunicaptionBackend.Core;
 using CommunicaptionBackend.Entities;
@@ -89,7 +86,36 @@ namespace CommunicaptionBackend.Controllers
             return result;
         }
 
+        [HttpPost("connectWithHololens/{pin}")]
+        public HttpResponseMessage ConnectWithHololens(string pin)
+        {
+            //Return userId if pairing exists otherwise return null.
+            string userId = CheckForPairing(pin).Content.ToString();
 
+            if(userId != null)
+            {
+                User user = new User();
+                user.userId = userId;
+                userContext.Users.Add(user);
+                userContext.SaveChanges();
+
+                var result = new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(user.userId)
+                };
+
+                return result;
+            }
+            else
+            {
+                var result = new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent("No pair available for this PIN.")
+                };
+
+                return result;
+            }
+        }
 
         [HttpPost("connectWithoutHololens")]
         public HttpResponseMessage ConnectWithoutHololens()
