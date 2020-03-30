@@ -49,7 +49,6 @@ namespace CommunicaptionBackend.Controllers
 
             return result;
         }
-
         [HttpPost("pushMessage/{userId}")]
         public IActionResult PushMessage(string userId, Message message)
         {
@@ -60,7 +59,7 @@ namespace CommunicaptionBackend.Controllers
                 message = "Pushed Message."
             });
         }
-
+        
         [HttpPost("disconnectDevice/{userId}")]
         public IActionResult DisconnectDevice(string userId)
         {
