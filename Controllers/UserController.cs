@@ -89,12 +89,19 @@ namespace CommunicaptionBackend.Controllers
             return result;
         }
 
+
+
         [HttpPost("connectWithoutHololens")]
-        public IActionResult ConnectWithoutHololens()
+        public HttpResponseMessage ConnectWithoutHololens()
         {
             User user = new User();
             userContext.Users.Add(user);
             userContext.SaveChanges();
+            var result = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(user.userId)
+            };
+            return result;
         }
 
     }
