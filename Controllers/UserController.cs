@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using CommunicaptionBackend.Contexts;
 using CommunicaptionBackend.Core;
-using CommunicaptionBackend.Entities;
+using CommunicaptionBackend.Models;
 using CommunicaptionBackend.Wrappers;
 using Microsoft.AspNetCore.Mvc;
 
