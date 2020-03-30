@@ -6,21 +6,25 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using CommunicaptionBackend.Contexts;
 using CommunicaptionBackend.Core;
+using CommunicaptionBackend.Entities;
 using CommunicaptionBackend.Wrappers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CommunicaptionBackend.Controllers
 {
     [Route("/")]
-    public class UserController : Controller
+    public class UserController : ControllerBase
     {
         private Guid guidPin;
         private MessageProcessor messageProcessor;
+        private Context userContext;
 
-        public UserController(MessageProcessor messageProcessor)
+        public UserController(MessageProcessor messageProcessor, Context userContext)
         {
             this.messageProcessor = messageProcessor;
+            this.userContext = userContext;
         }
 
         [HttpGet("pin")]
@@ -83,6 +87,14 @@ namespace CommunicaptionBackend.Controllers
                 Content = new StringContent(userId)
             };
             return result;
+        }
+
+        [HttpPost("connectWithoutHololens")]
+        public IActionResult ConnectWithoutHololens()
+        {
+            User user = new User();
+            userContext.Users.Add(user);
+            userContext.SaveChanges();
         }
 
     }

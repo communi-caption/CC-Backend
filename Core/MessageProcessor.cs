@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunicaptionBackend.Wrappers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace CommunicaptionBackend.Core
         public void PushMessage(string userId, Message message)
         {
             if (messages.Count == 0)
-                message = new List<Message>();
+                messages = new List<Message>();
 
             messages.Add(message);
         }
