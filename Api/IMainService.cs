@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CommunicaptionBackend.Wrappers;
+using CommunicaptionBackend.Messages;
 
 namespace CommunicaptionBackend.Api {
 

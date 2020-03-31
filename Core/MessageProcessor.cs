@@ -1,6 +1,6 @@
 ﻿using CommunicaptionBackend.Api;
 using CommunicaptionBackend.Models;
-using CommunicaptionBackend.Wrappers;
+using CommunicaptionBackend.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -6,7 +6,7 @@ using System.Net.Http.Headers;
 using CommunicaptionBackend.Api;
 using CommunicaptionBackend.Core;
 using CommunicaptionBackend.Models;
-using CommunicaptionBackend.Wrappers;
+using CommunicaptionBackend.Messages;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CommunicaptionBackend.Api {
