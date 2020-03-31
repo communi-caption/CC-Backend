@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CommunicaptionBackend.Wrappers
+namespace CommunicaptionBackend.Messages
 {
-    public class SettingsChanged
+    public class SettingsChangedMessage : Message
     {
         public string Mode { get; set; }
         public string NativeLanguageCode { get; set; }

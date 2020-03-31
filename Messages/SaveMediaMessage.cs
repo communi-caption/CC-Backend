@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunicaptionBackend.Models;
 
-namespace CommunicaptionBackend.Wrappers
+namespace CommunicaptionBackend.Messages
 {
-    public class SaveMediaMessage
+    public class SaveMediaMessage : Message
     {
         public int UserID { get; set; }
         public int FileSize { get; set; }
