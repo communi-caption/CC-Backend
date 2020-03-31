@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace CommunicaptionBackend.Entities
 {
     public class MediaEntity
@@ -8,8 +9,5 @@ namespace CommunicaptionBackend.Entities
         public DateTime DateTime{ get; set; }
         public bool Type { get; set; }
         public int Size { get; set; }
-
-
-
     }
 }
