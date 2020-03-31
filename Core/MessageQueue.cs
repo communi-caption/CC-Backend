@@ -1,23 +1,26 @@
 ﻿using CommunicaptionBackend.Messages;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CommunicaptionBackend.Core
-{
-    public class MessageQueue
-    {
-        public static List<SaveMediaMessage> messages;
+namespace CommunicaptionBackend.Core {
 
-        public void PushMessage(string userId, SaveMediaMessage message)
-        {
-            if (messages.Count == 0)
-                messages = new List<SaveMediaMessage>();
+    public class MessageQueue {
 
-            messages.Add(message);
+        public ConcurrentQueue<Message> messages;
+
+        public MessageQueue() {
+            this.messages = new ConcurrentQueue<Message>();
         }
-        
 
+        public void PushMessage(Message message) {
+            messages.Enqueue(message);
+        }
+
+        public bool TryPopMessage(out Message message) {
+            return messages.TryDequeue(out message);
+        }
     }
 }
