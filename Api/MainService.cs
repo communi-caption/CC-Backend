@@ -43,7 +43,7 @@ namespace CommunicaptionBackend.Api
 
         public byte[] GetMediaData(string mediaId)
         {
-            return File.ReadAllBytes("videos/" + mediaId);
+            return File.ReadAllBytes("medias/" + mediaId);
         }
 
         public void PushMessage(Message message)

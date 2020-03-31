@@ -29,16 +29,10 @@ namespace CommunicaptionBackend.Core
             mediaContext.Medias.Add(media);
             mediaContext.SaveChanges();
 
-            if (media.Type.Equals("photo"))
+            if (media.Type.Equals("photo") || media.Type.Equals("video"))
             {
                 string filename = media.MediaId.ToString();
-                string saveImagePath = ("medias/") + filename + ".png";
-                File.WriteAllBytes(saveImagePath, message.Data);
-            }
-            else if(media.Type.Equals("video"))
-            {
-                string filename = media.MediaId.ToString();
-                string saveImagePath = ("medias/") + filename + ".mp4";
+                string saveImagePath = ("medias/") + filename;
                 File.WriteAllBytes(saveImagePath, message.Data);
             }
             else
