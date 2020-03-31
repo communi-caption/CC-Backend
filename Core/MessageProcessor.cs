@@ -1,4 +1,6 @@
-﻿using CommunicaptionBackend.Wrappers;
+﻿using CommunicaptionBackend.Contexts;
+using CommunicaptionBackend.Models;
+using CommunicaptionBackend.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,16 +10,19 @@ namespace CommunicaptionBackend.Core
 {
     public class MessageProcessor
     {
-        public static List<Message> messages;
+        private MainContext mediaContext;
 
-        public void PushMessage(string userId, Message message)
+        public void SaveMedia(SaveMediaMessage message)
         {
-            if (messages.Count == 0)
-                messages = new List<Message>();
+            Media media = new Media();
+            media.type = message.MediaType;
+            media.userId = message.UserID;
+            media.size = message.FileSize;
+            media.dateTime = DateTime.Now;
+            mediaContext.Medias.Add(media);
+            mediaContext.SaveChanges();
 
-            messages.Add(message);
+
         }
-        
-
     }
 }

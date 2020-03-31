@@ -8,9 +8,9 @@ using CommunicaptionBackend.Wrappers;
 namespace CommunicaptionBackend.Api {
 
     public class MainService : IMainService {
-        private readonly Context mainContext;
+        private readonly MainContext mainContext;
 
-        public MainService(Context mainContext) {
+        public MainService(MainContext mainContext) {
             this.mainContext = mainContext;
         }
 
