@@ -1,4 +1,4 @@
-﻿using CommunicaptionBackend.Models;
+﻿using CommunicaptionBackend.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,13 +13,13 @@ namespace CommunicaptionBackend.Api
             : base(options){ 
         }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<Media> Medias { get; set; }
+        public DbSet<UserEntity> Users { get; set; }
+        public DbSet<MediaEntity> Medias { get; set; }
 
         protected override void OnModelCreating(ModelBuilder mb)
         {
-            mb.Entity<User>().HasKey(x => new { x.userId });
-            mb.Entity<Media>().HasKey(x => new { x.mediaId });
+            mb.Entity<UserEntity>().HasKey(x => new { x.UserId });
+            mb.Entity<MediaEntity>().HasKey(x => new { x.MediaId });
         }
     }
 }
