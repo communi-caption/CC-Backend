@@ -1,5 +1,5 @@
 ﻿using CommunicaptionBackend.Api;
-using CommunicaptionBackend.Models;
+using CommunicaptionBackend.Entities;
 using CommunicaptionBackend.Messages;
 using System;
 using System.Collections.Generic;
@@ -14,11 +14,11 @@ namespace CommunicaptionBackend.Core
 
         public void SaveMedia(SaveMediaMessage message)
         {
-            Media media = new Media();
-            media.type = message.MediaType;
-            media.userId = message.UserID;
-            media.size = message.FileSize;
-            media.dateTime = DateTime.Now;
+            MediaEntity media = new MediaEntity();
+            media.Type = message.MediaType;
+            media.UserId = message.UserID;
+            media.Size = message.FileSize;
+            media.DateTime = DateTime.Now;
             mediaContext.Medias.Add(media);
             mediaContext.SaveChanges();
 

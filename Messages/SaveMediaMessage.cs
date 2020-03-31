@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CommunicaptionBackend.Models;
+using CommunicaptionBackend.Entities;
 
 namespace CommunicaptionBackend.Messages
 {
@@ -10,7 +10,7 @@ namespace CommunicaptionBackend.Messages
     {
         public int UserID { get; set; }
         public int FileSize { get; set; }
-        public bool MediaType;
-        public byte[] Data;
+        public bool MediaType { get; set; }
+        public byte[] Data { get; set; }
     }
 }
