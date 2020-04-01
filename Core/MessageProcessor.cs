@@ -2,10 +2,7 @@
 using CommunicaptionBackend.Entities;
 using CommunicaptionBackend.Messages;
 using System;
-using System.Drawing;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Xabe.FFmpeg.Model;
 using Xabe.FFmpeg;
