@@ -7,6 +7,8 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Xabe.FFmpeg.Model;
+using Xabe.FFmpeg;
 
 namespace CommunicaptionBackend.Core
 {
@@ -19,7 +21,7 @@ namespace CommunicaptionBackend.Core
             this.mediaContext = mediaContext;
         }
 
-        public void ByteToFile(SaveMediaMessage message)
+        public async Task ByteToFileAsync(SaveMediaMessage message)
         {
             MediaEntity media = new MediaEntity();
             media.Type = message.MediaType;
@@ -29,19 +31,12 @@ namespace CommunicaptionBackend.Core
             mediaContext.Medias.Add(media);
             mediaContext.SaveChanges();
 
-            if (media.Type.Equals("photo") || media.Type.Equals("video"))
-            {
-                string filename = media.MediaId.ToString();
-                string saveImagePath = ("medias/") + filename;
-                File.WriteAllBytes(saveImagePath, message.Data);
-            }
-            else
-            {
-                string filename = media.MediaId.ToString();
-                string saveImagePath = ("thumbnails/") + filename + ".png";
-                File.WriteAllBytes(saveImagePath, message.Data);
-            }
+            string filename = media.MediaId.ToString();
+            string saveImagePath = ("medias/") + filename;
+            File.WriteAllBytes(saveImagePath, message.Data);
+
+            string saveThumbnPath = ("thumbnails/") + filename + ".png";
+            IConversionResult result = await Conversion.Snapshot("saveImagePath", saveThumbnPath, TimeSpan.FromSeconds(0)).Start();
         }
-        
     }
 }
