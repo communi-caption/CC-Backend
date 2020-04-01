@@ -7,6 +7,7 @@ using CommunicaptionBackend.Api;
 using CommunicaptionBackend.Core;
 using CommunicaptionBackend.Messages;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace CommunicaptionBackend.Api {
 
@@ -26,21 +27,34 @@ namespace CommunicaptionBackend.Api {
         }
 
         [HttpGet("media/{userId}/{mediaId}")]
-        public IActionResult GetMedia(string userId, string mediaId) {
+        public IActionResult GetMedia(int userId, string mediaId) {
             return File(mainService.GetMediaData(mediaId), "application/octet-stream");
         }
 
         [HttpPost("pushMessage/{userId}")]
-        public IActionResult PushMessage(string userId, [FromBody] Message message) {
+        public IActionResult PushMessage(int userId, [FromBody] Message message) {
             mainService.PushMessage(message);
 
             return ActionResults.Json(new {
                 message = "Pushed Message."
             });
         }
+        [HttpGet("getMessages/{userId}")]
+        public IActionResult GetMessages(int userId)
+        {
+            if(!mainService.CheckUserExists(userId)) {
+                return ActionResults.Json(new {
+                    error = "No such user!"
+                }, 400);
+            }
 
+            return ActionResults.Json(new
+            {
+                messages = JsonConvert.SerializeObject(mainService.GetMessages(userId))
+            });
+        }
         [HttpPost("disconnectDevice/{userId}")]
-        public IActionResult DisconnectDevice(string userId) {
+        public IActionResult DisconnectDevice(int userId) {
             mainService.DisconnectDevice(userId);
 
             return ActionResults.Json(new {
@@ -57,9 +71,9 @@ namespace CommunicaptionBackend.Api {
 
         [HttpPost("connectWithHololens/{pin}")]
         public IActionResult ConnectWithHololens(string pin) {
-            string userId = mainService.ConnectWithHoloLens(pin);
+            int userId = mainService.ConnectWithHoloLens(pin);
 
-            if (userId != null) {
+            if (userId != 0) {
                 return ActionResults.Json(new {
                     userId = userId
                 }, 200);
@@ -73,7 +87,7 @@ namespace CommunicaptionBackend.Api {
 
         [HttpPost("connectWithoutHololens")]
         public IActionResult ConnectWithoutHololens() {
-            string userId = mainService.ConnectWithoutHoloLens();
+            int userId = mainService.ConnectWithoutHoloLens();
             return ActionResults.Json(new {
                 userId = userId
             });

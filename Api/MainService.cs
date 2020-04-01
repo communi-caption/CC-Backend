@@ -22,7 +22,7 @@ namespace CommunicaptionBackend.Api
             this.messageQueue = messageQueue;
         }
 
-        public void DisconnectDevice(string userId)
+        public void DisconnectDevice(int userId)
         {
             var user = mainContext.Users.SingleOrDefault(x => userId == x.UserId);
             if (user == null)
@@ -57,16 +57,30 @@ namespace CommunicaptionBackend.Api
             messageQueue.PushMessage(message);
         }
 
-        public string CheckForPairing(string pin)
+        public List<Message> GetMessages(int userId)
+        {
+            // todo
+            return null;
+        }
+
+        public int CheckForPairing(string pin)
         {
             var user = mainContext.Users.SingleOrDefault(x => x.Pin == pin);
             if (user == null)
-                return null;
+                return 0;
 
             return user.UserId;
         }
 
-        public string ConnectWithoutHoloLens()
+        public bool CheckUserExists(int UserId)
+        {
+            var user = mainContext.Users.SingleOrDefault(x => x.UserId == UserId);
+            if (user == null)
+                return false;
+            return true;
+        }
+
+        public int ConnectWithoutHoloLens()
         {
             UserEntity user = new UserEntity
             {
@@ -77,15 +91,15 @@ namespace CommunicaptionBackend.Api
             mainContext.Users.Add(user);
             mainContext.SaveChanges();
 
-            return user.Pin; 
+            return user.UserId; 
         }
 
-        public string ConnectWithHoloLens(string pin)
+        public int ConnectWithHoloLens(string pin)
         {
-            string userId = CheckForPairing(pin);
+            int userId = CheckForPairing(pin);
 
-            if (userId == null)
-                return null;
+            if (userId == 0)
+                return 0;
             else
             {
                 var user = mainContext.Users.SingleOrDefault(x => userId == x.UserId);
@@ -96,7 +110,6 @@ namespace CommunicaptionBackend.Api
 
                 return userId;
             }
-                
         }
     }
 }
