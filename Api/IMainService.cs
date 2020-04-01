@@ -22,6 +22,8 @@ namespace CommunicaptionBackend.Api {
 
         public string CheckForPairing(string pin);
 
+        public bool CheckUserExists(string UserId);
+
         public string ConnectWithoutHoloLens();
         
         public string ConnectWithHoloLens(string pin);

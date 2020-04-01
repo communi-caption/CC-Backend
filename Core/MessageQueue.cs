@@ -18,6 +18,10 @@ namespace CommunicaptionBackend.Core {
         public void PushMessage(Message message) {
             messages.Enqueue(message);
         }
+        public ConcurrentQueue<Message> GetMessages()
+        {
+            return messages;
+        }
 
         public bool TryPopMessage(out Message message) {
             return messages.TryDequeue(out message);

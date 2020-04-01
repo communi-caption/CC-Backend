@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -56,6 +57,10 @@ namespace CommunicaptionBackend.Api
         {
             messageQueue.PushMessage(message);
         }
+        public ConcurrentQueue<Message> GetMessages()
+        {
+            return messageQueue.GetMessages();
+        }
 
         public string CheckForPairing(string pin)
         {
@@ -66,6 +71,7 @@ namespace CommunicaptionBackend.Api
             return user.UserId;
         }
 
+
         public bool CheckUserExists(string UserId)
         {
             var user = mainContext.Users.SingleOrDefault(x => x.UserId == UserId);
@@ -73,6 +79,7 @@ namespace CommunicaptionBackend.Api
                 return false;
             return true;
         }
+
 
         public string ConnectWithoutHoloLens()
         {
