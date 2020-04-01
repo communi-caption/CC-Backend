@@ -9,18 +9,29 @@ namespace CommunicaptionBackend.Core {
 
     public class MessageQueue {
 
-        public ConcurrentQueue<Message> messages;
+        public ConcurrentDictionary<int, ConcurrentQueue<Message>> queues;
 
         public MessageQueue() {
-            this.messages = new ConcurrentQueue<Message>();
+            this.queues = new ConcurrentDictionary<int, ConcurrentQueue<Message>>();
         }
 
         public void PushMessage(Message message) {
-            messages.Enqueue(message);
+            var queue = queues.GetOrAdd(message.UserId, new ConcurrentQueue<Message>());
+            queue.Enqueue(message);
         }
 
-        public bool TryPopMessage(out Message message) {
-            return messages.TryDequeue(out message);
+        public bool TryPopMessage(int userId, out Message message) {
+            var queue = queues.GetOrAdd(userId, new ConcurrentQueue<Message>());
+            return queue.TryDequeue(out message);
+        }
+
+        public List<Message> SwapQueue(int userId) {
+            var res = new List<Message>();
+
+            Message message;
+            while (TryPopMessage(userId, out message))
+                res.Add(message);
+            return res;
         }
     }
 }

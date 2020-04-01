@@ -8,37 +8,18 @@ using Xabe.FFmpeg.Model;
 using Xabe.FFmpeg;
 using Newtonsoft.Json;
 
-namespace CommunicaptionBackend.Core
-{
-    public class MessageProcessor
-    {
+namespace CommunicaptionBackend.Core {
+    public class MessageProcessor {
         private MainContext mediaContext;
 
-        public MessageProcessor(MainContext mediaContext)
-        {
+        public MessageProcessor(MainContext mediaContext) {
             this.mediaContext = mediaContext;
         }
 
-        public void ProcessMessage(Message message)
-        {
-            switch (message)
-            {
-                case SaveMediaMessage saveMediaMessage:
-                    Task.Run(async () => await ByteToFileAsync(saveMediaMessage));
-                    break;
-                case SettingsChangedMessage settingsChangedMessage:
-                    SaveSettingsToDB(settingsChangedMessage);
-                    break;
-                default:
-                    throw new Exception("Bug found!");
-            }
-        }
-
-        private async Task ByteToFileAsync(SaveMediaMessage message)
-        {
+        public async Task ByteToFileAsync(SaveMediaMessage message) {
             MediaEntity media = new MediaEntity();
             media.Type = message.MediaType;
-            media.UserId = message.UserID;
+            media.UserId = message.UserId;
             media.Size = message.FileSize;
             media.DateTime = DateTime.Now;
             mediaContext.Medias.Add(media);
@@ -52,10 +33,9 @@ namespace CommunicaptionBackend.Core
             IConversionResult result = await Conversion.Snapshot("saveImagePath", saveThumbnPath, TimeSpan.FromSeconds(0)).Start();
         }
 
-        private void SaveSettingsToDB(SettingsChangedMessage message)
-        {
+        public void SaveSettingsToDB(SettingsChangedMessage message) {
             SettingsEntity settings = new SettingsEntity();
-            settings.UserId = message.UserID;
+            settings.UserId = message.UserId;
 
             string result = JsonConvert.SerializeObject(message);
             settings.Json = result;

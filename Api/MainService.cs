@@ -8,86 +8,80 @@ using CommunicaptionBackend.Core;
 using CommunicaptionBackend.Entities;
 using CommunicaptionBackend.Messages;
 
-namespace CommunicaptionBackend.Api
-{
+namespace CommunicaptionBackend.Api {
 
-    public class MainService : IMainService
-    {
+    public class MainService : IMainService {
         private readonly MainContext mainContext;
         private readonly MessageQueue messageQueue;
 
-        public MainService(MainContext mainContext, MessageQueue messageQueue)
-        {
+        public MainService(MainContext mainContext, MessageQueue messageQueue) {
             this.mainContext = mainContext;
             this.messageQueue = messageQueue;
         }
 
-        public void DisconnectDevice(string userId)
-        {
+        public void DisconnectDevice(int userId) {
             var user = mainContext.Users.SingleOrDefault(x => userId == x.UserId);
             if (user == null)
                 return;
-
             user.Connected = false;
-
             mainContext.SaveChanges();
         }
 
-        public string GeneratePin()
-        {
-            UserEntity user = new UserEntity
-            {
+        public string GeneratePin() {
+            var user = new UserEntity {
                 Pin = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 8),
                 Connected = false
             };
 
             mainContext.Users.Add(user);
             mainContext.SaveChanges();
-
             return user.Pin;
         }
 
-        public byte[] GetMediaData(string mediaId)
-        {
+        public byte[] GetMediaData(string mediaId) {
             return File.ReadAllBytes("medias/" + mediaId);
         }
 
-        public void PushMessage(Message message)
-        {
+        public void PushMessage(Message message) {
             messageQueue.PushMessage(message);
         }
 
-        public string CheckForPairing(string pin)
-        {
+        public List<Message> GetMessages(int userId) {
+            return messageQueue.SwapQueue(userId);
+        }
+
+        public int CheckForPairing(string pin) {
             var user = mainContext.Users.SingleOrDefault(x => x.Pin == pin);
             if (user == null)
-                return null;
+                return 0;
+            return user.UserId;
+        }
+
+        public bool CheckUserExists(int userId) {
+            var user = mainContext.Users.SingleOrDefault(x => x.UserId == userId);
+            if (user == null)
+                return false;
+            return true;
+        }
+
+        public int ConnectWithoutHoloLens() {
+            UserEntity user = new UserEntity {
+                Pin = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 8),
+                Connected = false
+            };
+
+            mainContext.Users.Add(user);
+            mainContext.SaveChanges();
 
             return user.UserId;
         }
 
-        public string ConnectWithoutHoloLens()
-        {
-            UserEntity user = new UserEntity
-            {
-                Pin = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 8),
-                Connected = false
-            };
+        public int ConnectWithHoloLens(string pin) {
+            int userId = CheckForPairing(pin);
 
-            mainContext.Users.Add(user);
-            mainContext.SaveChanges();
-
-            return user.Pin; 
-        }
-
-        public string ConnectWithHoloLens(string pin)
-        {
-            string userId = CheckForPairing(pin);
-
-            if (userId == null)
-                return null;
-            else
-            {
+            if (userId == 0)
+                return 0;
+            else {
                 var user = mainContext.Users.SingleOrDefault(x => userId == x.UserId);
                 user.Connected = true;
 
@@ -96,7 +90,6 @@ namespace CommunicaptionBackend.Api
 
                 return userId;
             }
-                
         }
     }
 }
