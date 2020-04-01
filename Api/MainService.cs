@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,7 +22,7 @@ namespace CommunicaptionBackend.Api
             this.messageQueue = messageQueue;
         }
 
-        public void DisconnectDevice(string userId)
+        public void DisconnectDevice(int userId)
         {
             var user = mainContext.Users.SingleOrDefault(x => userId == x.UserId);
             if (user == null)
@@ -57,22 +56,22 @@ namespace CommunicaptionBackend.Api
         {
             messageQueue.PushMessage(message);
         }
-        public ConcurrentQueue<Message> GetMessages()
+        public List<Message> GetMessages(int userId)
         {
-            return messageQueue.GetMessages();
+            return messageQueue.GetMessages(userId);
         }
 
-        public string CheckForPairing(string pin)
+        public int CheckForPairing(string pin)
         {
             var user = mainContext.Users.SingleOrDefault(x => x.Pin == pin);
             if (user == null)
-                return null;
+                return 0;
 
             return user.UserId;
         }
 
 
-        public bool CheckUserExists(string UserId)
+        public bool CheckUserExists(int UserId)
         {
             var user = mainContext.Users.SingleOrDefault(x => x.UserId == UserId);
             if (user == null)
@@ -95,12 +94,12 @@ namespace CommunicaptionBackend.Api
             return user.Pin; 
         }
 
-        public string ConnectWithHoloLens(string pin)
+        public int ConnectWithHoloLens(string pin)
         {
-            string userId = CheckForPairing(pin);
+            int userId = CheckForPairing(pin);
 
-            if (userId == null)
-                return null;
+            if (userId == 0)
+                return 0;
             else
             {
                 var user = mainContext.Users.SingleOrDefault(x => userId == x.UserId);
