@@ -39,7 +39,7 @@ namespace CommunicaptionBackend.Api {
                 message = "Pushed Message."
             });
         }
-        [HttpGet("media/{userId}")]
+        [HttpGet("getMessages/{userId}")]
         public IActionResult GetMessages(string userId)
         {
             if(!mainService.CheckUserExists(userId))
