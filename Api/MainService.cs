@@ -56,9 +56,11 @@ namespace CommunicaptionBackend.Api
         {
             messageQueue.PushMessage(message);
         }
+
         public List<Message> GetMessages(int userId)
         {
-            return messageQueue.GetMessages(userId);
+            // todo
+            return null;
         }
 
         public int CheckForPairing(string pin)
@@ -70,7 +72,6 @@ namespace CommunicaptionBackend.Api
             return user.UserId;
         }
 
-
         public bool CheckUserExists(int UserId)
         {
             var user = mainContext.Users.SingleOrDefault(x => x.UserId == UserId);
@@ -79,8 +80,7 @@ namespace CommunicaptionBackend.Api
             return true;
         }
 
-
-        public string ConnectWithoutHoloLens()
+        public int ConnectWithoutHoloLens()
         {
             UserEntity user = new UserEntity
             {
@@ -91,7 +91,7 @@ namespace CommunicaptionBackend.Api
             mainContext.Users.Add(user);
             mainContext.SaveChanges();
 
-            return user.Pin; 
+            return user.UserId; 
         }
 
         public int ConnectWithHoloLens(string pin)
@@ -110,7 +110,6 @@ namespace CommunicaptionBackend.Api
 
                 return userId;
             }
-                
         }
     }
 }

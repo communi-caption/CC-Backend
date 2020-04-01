@@ -42,15 +42,15 @@ namespace CommunicaptionBackend.Api {
         [HttpGet("getMessages/{userId}")]
         public IActionResult GetMessages(int userId)
         {
-            if(!mainService.CheckUserExists(userId))
-                return ActionResults.Json(new
-                {
+            if(!mainService.CheckUserExists(userId)) {
+                return ActionResults.Json(new {
                     error = "No such user!"
                 }, 400);
+            }
 
             return ActionResults.Json(new
             {
-                messages = JsonConvert.SerializeObject(mainService.GetMessages())
+                messages = JsonConvert.SerializeObject(mainService.GetMessages(userId))
             });
         }
         [HttpPost("disconnectDevice/{userId}")]
@@ -87,7 +87,7 @@ namespace CommunicaptionBackend.Api {
 
         [HttpPost("connectWithoutHololens")]
         public IActionResult ConnectWithoutHololens() {
-            int userId = Int32.Parse(mainService.ConnectWithoutHoloLens());
+            int userId = mainService.ConnectWithoutHoloLens();
             return ActionResults.Json(new {
                 userId = userId
             });

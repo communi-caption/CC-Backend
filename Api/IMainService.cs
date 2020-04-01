@@ -16,15 +16,15 @@ namespace CommunicaptionBackend.Api {
 
         public void PushMessage(Message message);
 
-        public List<Message> GetMessages();
+        public List<Message> GetMessages(int userId);
 
         public void DisconnectDevice(int userId);
 
-        public string CheckForPairing(string pin);
+        public int CheckForPairing(string pin);
 
         public bool CheckUserExists(int userId);
 
-        public string ConnectWithoutHoloLens();
+        public int ConnectWithoutHoloLens();
         
         public int ConnectWithHoloLens(string pin);
     }
