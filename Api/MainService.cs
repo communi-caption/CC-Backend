@@ -23,21 +23,18 @@ namespace CommunicaptionBackend.Api {
             var user = mainContext.Users.SingleOrDefault(x => userId == x.UserId);
             if (user == null)
                 return;
-
             user.Connected = false;
-
             mainContext.SaveChanges();
         }
 
         public string GeneratePin() {
-            UserEntity user = new UserEntity {
+            var user = new UserEntity {
                 Pin = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 8),
                 Connected = false
             };
 
             mainContext.Users.Add(user);
             mainContext.SaveChanges();
-
             return user.Pin;
         }
 
@@ -57,7 +54,6 @@ namespace CommunicaptionBackend.Api {
             var user = mainContext.Users.SingleOrDefault(x => x.Pin == pin);
             if (user == null)
                 return 0;
-
             return user.UserId;
         }
 

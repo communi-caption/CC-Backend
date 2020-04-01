@@ -39,6 +39,7 @@ namespace CommunicaptionBackend.Api {
                 message = "Pushed Message."
             });
         }
+
         [HttpGet("getMessages/{userId}")]
         public IActionResult GetMessages(int userId)
         {
@@ -53,6 +54,7 @@ namespace CommunicaptionBackend.Api {
                 messages = JsonConvert.SerializeObject(mainService.GetMessages(userId))
             });
         }
+
         [HttpPost("disconnectDevice/{userId}")]
         public IActionResult DisconnectDevice(int userId) {
             mainService.DisconnectDevice(userId);
@@ -81,7 +83,7 @@ namespace CommunicaptionBackend.Api {
             else {
                 return ActionResults.Json(new {
                     error = "Pin does not match with any device"
-                }, 200);
+                }, 400);
             }
         }
 
