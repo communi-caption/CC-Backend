@@ -24,7 +24,13 @@ namespace CommunicaptionBackend.Api
 
         public void DisconnectDevice(string userId)
         {
-            // todo
+            var user = mainContext.Users.SingleOrDefault(x => userId == x.UserId);
+            if (user == null)
+                return;
+
+            user.Connected = false;
+
+            mainContext.SaveChanges();
         }
 
         public string GeneratePin()
@@ -53,7 +59,11 @@ namespace CommunicaptionBackend.Api
 
         public string CheckForPairing(string pin)
         {
-            return null; // todo
+            var user = mainContext.Users.SingleOrDefault(x => x.Pin == pin);
+            if (user == null)
+                return null;
+
+            return user.UserId;
         }
 
         public string ConnectWithoutHoloLens()
