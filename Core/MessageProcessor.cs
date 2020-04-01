@@ -22,7 +22,15 @@ namespace CommunicaptionBackend.Core
             this.mediaContext = mediaContext;
         }
 
-        public async Task ByteToFileAsync(SaveMediaMessage message)
+        public void ProcessMessage(Message message)
+        {
+            if (message is SaveMediaMessage)
+                Task.Run(async () => await ByteToFileAsync((SaveMediaMessage)message));
+            else
+                SaveSettingsToDB((SettingsChangedMessage)message);
+        }
+
+        private async Task ByteToFileAsync(SaveMediaMessage message)
         {
             MediaEntity media = new MediaEntity();
             media.Type = message.MediaType;
@@ -40,7 +48,7 @@ namespace CommunicaptionBackend.Core
             IConversionResult result = await Conversion.Snapshot("saveImagePath", saveThumbnPath, TimeSpan.FromSeconds(0)).Start();
         }
 
-        public void SaveSettingsToDB(SettingsChangedMessage message)
+        private void SaveSettingsToDB(SettingsChangedMessage message)
         {
             SettingsEntity settings = new SettingsEntity();
             settings.UserId = message.UserID;
