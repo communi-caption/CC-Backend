@@ -24,10 +24,17 @@ namespace CommunicaptionBackend.Core
 
         public void ProcessMessage(Message message)
         {
-            if (message is SaveMediaMessage)
-                Task.Run(async () => await ByteToFileAsync((SaveMediaMessage)message));
-            else
-                SaveSettingsToDB((SettingsChangedMessage)message);
+            switch (message)
+            {
+                case SaveMediaMessage saveMediaMessage:
+                    Task.Run(async () => await ByteToFileAsync(saveMediaMessage));
+                    break;
+                case SettingsChangedMessage settingsChangedMessage:
+                    SaveSettingsToDB(settingsChangedMessage);
+                    break;
+                default:
+                    throw new Exception("Bug found!");
+            }
         }
 
         private async Task ByteToFileAsync(SaveMediaMessage message)
