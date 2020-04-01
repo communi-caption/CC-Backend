@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xabe.FFmpeg.Model;
 using Xabe.FFmpeg;
+using Newtonsoft.Json;
 
 namespace CommunicaptionBackend.Core
 {
@@ -35,8 +36,20 @@ namespace CommunicaptionBackend.Core
             string saveImagePath = ("medias/") + filename;
             File.WriteAllBytes(saveImagePath, message.Data);
 
-            string saveThumbnPath = ("thumbnails/") + filename + ".png";
+            string saveThumbnPath = ("thumbnails/") + filename + ".jpg";
             IConversionResult result = await Conversion.Snapshot("saveImagePath", saveThumbnPath, TimeSpan.FromSeconds(0)).Start();
+        }
+
+        public void SaveSettingsToDB(SettingsChangedMessage message)
+        {
+            SettingsEntity settings = new SettingsEntity();
+            settings.UserId = message.UserID;
+
+            string result = JsonConvert.SerializeObject(message);
+            settings.Json = result;
+
+            mediaContext.Settings.Add(settings);
+            mediaContext.SaveChanges();
         }
     }
 }

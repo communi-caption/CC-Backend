@@ -16,6 +16,7 @@ namespace CommunicaptionBackend.Api
 
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<MediaEntity> Medias { get; set; }
+        public DbSet<SettingsEntity> Settings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder mb)
         {

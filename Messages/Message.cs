@@ -7,5 +7,6 @@ namespace CommunicaptionBackend.Messages
 {
     public class Message
     {
+        public int UserID { get; set; }
     }
 }

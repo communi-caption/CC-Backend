@@ -4,7 +4,7 @@ namespace CommunicaptionBackend.Entities
 {
     public class SettingsEntity
     {
-        public string UserId { get; set; }
+        public int UserId { get; set; }
         public string Json { get; set; }
     }
 }
