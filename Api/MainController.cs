@@ -7,6 +7,7 @@ using CommunicaptionBackend.Api;
 using CommunicaptionBackend.Core;
 using CommunicaptionBackend.Messages;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace CommunicaptionBackend.Api {
 
@@ -38,7 +39,20 @@ namespace CommunicaptionBackend.Api {
                 message = "Pushed Message."
             });
         }
+        [HttpGet("media/{userId}")]
+        public IActionResult GetMessages(string userId)
+        {
+            if(!mainService.CheckUserExists(userId))
+                return ActionResults.Json(new
+                {
+                    error = "No such user!"
+                }, 200);
 
+            return ActionResults.Json(new
+            {
+                messages = JsonConvert.SerializeObject(mainService.GetMessages())
+            });
+        }
         [HttpPost("disconnectDevice/{userId}")]
         public IActionResult DisconnectDevice(string userId) {
             mainService.DisconnectDevice(userId);

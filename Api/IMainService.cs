@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
+
 using CommunicaptionBackend.Messages;
 
 namespace CommunicaptionBackend.Api {
@@ -13,6 +15,8 @@ namespace CommunicaptionBackend.Api {
         byte[] GetMediaData(string mediaId);
 
         public void PushMessage(Message message);
+
+        public ConcurrentQueue<Message> GetMessages();
 
         public void DisconnectDevice(string userId);
 

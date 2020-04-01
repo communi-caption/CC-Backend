@@ -66,6 +66,14 @@ namespace CommunicaptionBackend.Api
             return user.UserId;
         }
 
+        public bool CheckUserExists(string UserId)
+        {
+            var user = mainContext.Users.SingleOrDefault(x => x.UserId == UserId);
+            if (user == null)
+                return false;
+            return true;
+        }
+
         public string ConnectWithoutHoloLens()
         {
             UserEntity user = new UserEntity
