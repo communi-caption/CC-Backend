@@ -38,7 +38,7 @@ namespace CommunicaptionBackend.Core
         {
             MediaEntity media = new MediaEntity();
             media.Type = message.MediaType;
-            media.UserId = message.UserID;
+            media.UserId = message.UserId;
             media.Size = message.FileSize;
             media.DateTime = DateTime.Now;
             mediaContext.Medias.Add(media);
@@ -55,7 +55,7 @@ namespace CommunicaptionBackend.Core
         private void SaveSettingsToDB(SettingsChangedMessage message)
         {
             SettingsEntity settings = new SettingsEntity();
-            settings.UserId = message.UserID;
+            settings.UserId = message.UserId;
 
             string result = JsonConvert.SerializeObject(message);
             settings.Json = result;
