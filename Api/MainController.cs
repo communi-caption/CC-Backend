@@ -31,7 +31,7 @@ namespace CommunicaptionBackend.Api {
             return File(mainService.GetMediaData(mediaId), "application/octet-stream");
         }
 
-        [HttpGet("mediaItems/{userId}")]
+        [HttpGet("mediaItems")]
         public IActionResult GetMediaItems(int userId)
         {
             return ActionResults.Json(new
@@ -49,7 +49,7 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
-        [HttpGet("getMessages/{userId}")]
+        [HttpGet("getMessages")]
         public IActionResult GetMessages(int userId)
         {
             if(!mainService.CheckUserExists(userId)) {
