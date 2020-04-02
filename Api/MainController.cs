@@ -26,7 +26,7 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
-        [HttpGet("media/{userId}/{mediaId}")]
+        [HttpGet("media")]
         public IActionResult GetMedia(int userId, string mediaId) {
             return File(mainService.GetMediaData(mediaId), "application/octet-stream");
         }
@@ -40,7 +40,7 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
-        [HttpPost("pushMessage/{userId}")]
+        [HttpPost("pushMessage")]
         public IActionResult PushMessage(int userId, [FromBody] Message message) {
             mainService.PushMessage(message);
 
@@ -79,7 +79,7 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
-        [HttpPost("connectWithHololens/{pin}")]
+        [HttpPost("connectWithHololens")]
         public IActionResult ConnectWithHololens(string pin) {
             int userId = mainService.ConnectWithHoloLens(pin);
 
