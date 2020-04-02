@@ -51,8 +51,8 @@ namespace CommunicaptionBackend.Api {
                 object obj = new
                 {
                     mediaId = media.MediaId,
-                    fileName = media.MediaId.ToString(),
-                    thumbnail = media.MediaId.ToString() + ".jpg"
+                    fileName = Newtonsoft.Json.JsonConvert.SerializeObject(media.DateTime),
+                    thumbnail = File.ReadAllBytes("thumbnails/" + media.MediaId.ToString()+ ".jpg")
                 };
                 itemInformations.Add(obj);
             }
