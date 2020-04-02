@@ -63,7 +63,7 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
-        [HttpPost("disconnectDevice/{userId}")]
+        [HttpPost("disconnectDevice")]
         public IActionResult DisconnectDevice(int userId) {
             mainService.DisconnectDevice(userId);
 
@@ -72,7 +72,7 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
-        [HttpGet("checkPairing/{pin}")]
+        [HttpGet("checkPairing")]
         public IActionResult CheckForPairing(string pin) {
             return ActionResults.Json(new {
                 userId = mainService.CheckForPairing(pin)
