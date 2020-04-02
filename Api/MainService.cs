@@ -42,6 +42,23 @@ namespace CommunicaptionBackend.Api {
             return File.ReadAllBytes("medias/" + mediaId);
         }
 
+        public List<object> GetMediaItems(int userId)
+        {
+            List<object> itemInformations = new List<object>();
+            var medias = mainContext.Medias.Where(x => x.UserId == userId);
+            foreach (var media in medias)
+            {
+                object obj = new
+                {
+                    mediaId = media.MediaId,
+                    fileName = Newtonsoft.Json.JsonConvert.SerializeObject(media.DateTime),
+                    thumbnail = File.ReadAllBytes("thumbnails/" + media.MediaId.ToString()+ ".jpg")
+                };
+                itemInformations.Add(obj);
+            }
+            return itemInformations;         
+        }
+
         public void PushMessage(Message message) {
             messageQueue.PushMessage(message);
         }

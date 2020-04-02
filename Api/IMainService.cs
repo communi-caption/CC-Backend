@@ -14,6 +14,8 @@ namespace CommunicaptionBackend.Api {
 
         byte[] GetMediaData(string mediaId);
 
+        public List<object> GetMediaItems(int userId);
+
         public void PushMessage(Message message);
 
         public List<Message> GetMessages(int userId);
