@@ -27,7 +27,6 @@ namespace CommunicaptionBackend.Core {
 
         public List<Message> SwapQueue(int userId) {
             var res = new List<Message>();
-
             Message message;
             while (TryPopMessage(userId, out message))
                 res.Add(message);

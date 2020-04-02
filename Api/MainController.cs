@@ -31,6 +31,15 @@ namespace CommunicaptionBackend.Api {
             return File(mainService.GetMediaData(mediaId), "application/octet-stream");
         }
 
+        [HttpGet("mediaItems/{userId}")]
+        public IActionResult GetMediaItems(int userId)
+        {
+            return ActionResults.Json(new
+            {
+                items = JsonConvert.SerializeObject(mainService.GetMediaItems(userId))
+            });
+        }
+
         [HttpPost("pushMessage/{userId}")]
         public IActionResult PushMessage(int userId, [FromBody] Message message) {
             mainService.PushMessage(message);
@@ -48,7 +57,6 @@ namespace CommunicaptionBackend.Api {
                     error = "No such user!"
                 }, 400);
             }
-
             return ActionResults.Json(new
             {
                 messages = JsonConvert.SerializeObject(mainService.GetMessages(userId))
