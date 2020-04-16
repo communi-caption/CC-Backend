@@ -13,10 +13,12 @@ namespace CommunicaptionBackend.Api {
     public class MainService : IMainService {
         private readonly MainContext mainContext;
         private readonly MessageQueue messageQueue;
+        private readonly LuceneProcessor luceneProcessor;
 
-        public MainService(MainContext mainContext, MessageQueue messageQueue) {
+        public MainService(MainContext mainContext, MessageQueue messageQueue, LuceneProcessor luceneProcessor) {
             this.mainContext = mainContext;
             this.messageQueue = messageQueue;
+            this.luceneProcessor = luceneProcessor;
         }
 
         public void DisconnectDevice(int userId) {
@@ -39,6 +41,13 @@ namespace CommunicaptionBackend.Api {
         }
 
         public byte[] GetMediaData(string mediaId) {
+            return File.ReadAllBytes("medias/" + mediaId);
+        }
+
+        public byte[] getSearchResult(string searchInputJson)
+        {
+            luceneProcessor.FetchResults(searchInputJson);
+            string mediaId = ""; //Search result will return specific media
             return File.ReadAllBytes("medias/" + mediaId);
         }
 
