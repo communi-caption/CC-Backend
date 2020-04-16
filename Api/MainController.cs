@@ -31,6 +31,7 @@ namespace CommunicaptionBackend.Api {
             return File(mainService.GetMediaData(mediaId), "application/octet-stream");
         }
 
+<<<<<<< HEAD
         [HttpGet("search")]
         public IActionResult Search(string json)
         {
@@ -38,6 +39,9 @@ namespace CommunicaptionBackend.Api {
         }
 
         [HttpGet("mediaItems/{userId}")]
+=======
+        [HttpGet("mediaItems")]
+>>>>>>> 9b6ff21ade0cdfa6301232797906080f5fe7e47c
         public IActionResult GetMediaItems(int userId)
         {
             return ActionResults.Json(new
@@ -55,7 +59,7 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
-        [HttpGet("getMessages/{userId}")]
+        [HttpGet("getMessages")]
         public IActionResult GetMessages(int userId)
         {
             if(!mainService.CheckUserExists(userId)) {
@@ -69,7 +73,7 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
-        [HttpPost("disconnectDevice/{userId}")]
+        [HttpPost("disconnectDevice")]
         public IActionResult DisconnectDevice(int userId) {
             mainService.DisconnectDevice(userId);
 
@@ -78,7 +82,7 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
-        [HttpGet("checkPairing/{pin}")]
+        [HttpGet("checkPairing")]
         public IActionResult CheckForPairing(string pin) {
             return ActionResults.Json(new {
                 userId = mainService.CheckForPairing(pin)
