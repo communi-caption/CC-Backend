@@ -31,17 +31,13 @@ namespace CommunicaptionBackend.Api {
             return File(mainService.GetMediaData(mediaId), "application/octet-stream");
         }
 
-<<<<<<< HEAD
         [HttpGet("search")]
         public IActionResult Search(string json)
         {
             return File(mainService.getSearchResult(json), "application/octet-stream");
         }
 
-        [HttpGet("mediaItems/{userId}")]
-=======
         [HttpGet("mediaItems")]
->>>>>>> 9b6ff21ade0cdfa6301232797906080f5fe7e47c
         public IActionResult GetMediaItems(int userId)
         {
             return ActionResults.Json(new
