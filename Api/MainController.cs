@@ -60,6 +60,15 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
+        [HttpPost("saveMediaMessage")]
+        public IActionResult SaveMediaMessage([FromBody] SaveMediaMessage message) {
+            mainService.PushMessage(message);
+
+            return ActionResults.Json(new {
+                message = "Pushed Message."
+            });
+        }
+
         [HttpGet("getMessages")]
         public IActionResult GetMessages(int userId)
         {

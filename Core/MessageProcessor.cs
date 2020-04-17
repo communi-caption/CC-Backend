@@ -24,7 +24,7 @@ namespace CommunicaptionBackend.Core
             switch (message)
             {
                 case SaveMediaMessage saveMediaMessage:
-                    Task.Run(async () => await ByteToFileAsync(saveMediaMessage));
+                    ByteToFileAsync(saveMediaMessage);
                     break;
                 case SettingsChangedMessage settingsChangedMessage:
                     SaveSettingsToDB(settingsChangedMessage);
@@ -34,8 +34,13 @@ namespace CommunicaptionBackend.Core
             }
         }
 
-        private async Task ByteToFileAsync(SaveMediaMessage message)
+        private void ByteToFileAsync(SaveMediaMessage message)
         {
+            if (!Directory.Exists("medias"))
+                Directory.CreateDirectory("medias");
+            if (!Directory.Exists("thumbnails"))
+                Directory.CreateDirectory("thumbnails");
+
             MediaEntity media = new MediaEntity();
             media.Type = message.MediaType;
             media.UserId = message.UserId;
@@ -49,7 +54,7 @@ namespace CommunicaptionBackend.Core
             File.WriteAllBytes(saveImagePath, message.Data);
 
             string saveThumbnPath = ("thumbnails/") + filename + ".jpg";
-            IConversionResult result = await Conversion.Snapshot("saveImagePath", saveThumbnPath, TimeSpan.FromSeconds(0)).Start();
+            File.WriteAllBytes(saveThumbnPath, message.Data);
         }
 
         private void SaveSettingsToDB(SettingsChangedMessage message)

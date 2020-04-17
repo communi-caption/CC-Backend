@@ -13,10 +13,12 @@ namespace CommunicaptionBackend.Api {
     public class MainService : IMainService {
         private readonly MainContext mainContext;
         private readonly MessageQueue messageQueue;
+        private readonly MessageProcessor messageProcessor;
         private readonly LuceneProcessor luceneProcessor;
 
-        public MainService(MainContext mainContext, MessageQueue messageQueue, LuceneProcessor luceneProcessor) {
+        public MainService(MainContext mainContext, MessageProcessor messageProcessor, MessageQueue messageQueue, LuceneProcessor luceneProcessor) {
             this.mainContext = mainContext;
+            this.messageProcessor = messageProcessor;
             this.messageQueue = messageQueue;
             this.luceneProcessor = luceneProcessor;
         }
@@ -69,7 +71,11 @@ namespace CommunicaptionBackend.Api {
         }
 
         public void PushMessage(Message message) {
-            messageQueue.PushMessage(message);
+            if (message is SaveMediaMessage) {
+                messageProcessor.ProcessMessage(message);
+            } else {
+                messageQueue.PushMessage(message);
+            }
         }
 
         public List<Message> GetMessages(int userId) {

@@ -31,6 +31,7 @@ namespace CommunicaptionBackend {
             services.AddRazorPages();
             services.AddScoped<IMainService, MainService>();
             services.AddSingleton<MessageQueue>();
+            services.AddScoped<MessageProcessor>();
             services.AddSingleton<LuceneProcessor>();
 
             services.AddDbContext<MainContext>(opt =>
