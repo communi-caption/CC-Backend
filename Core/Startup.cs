@@ -12,6 +12,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace CommunicaptionBackend {
 
@@ -28,6 +31,11 @@ namespace CommunicaptionBackend {
             services.AddRazorPages();
             services.AddScoped<IMainService, MainService>();
             services.AddSingleton<MessageQueue>();
+            services.AddSingleton<LuceneProcessor>();
+
+            services.AddDbContext<MainContext>(opt =>
+                opt.UseInMemoryDatabase("main")
+            );
             services.AddDbContext<MainContext>();
         }
 

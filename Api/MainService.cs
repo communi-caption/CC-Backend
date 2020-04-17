@@ -22,7 +22,7 @@ namespace CommunicaptionBackend.Api {
         }
 
         public void DisconnectDevice(int userId) {
-            var user = mainContext.Users.SingleOrDefault(x => userId == x.UserId);
+            var user = mainContext.Users.SingleOrDefault(x => userId == x.Id);
             if (user == null)
                 return;
             user.Connected = false;
@@ -59,9 +59,9 @@ namespace CommunicaptionBackend.Api {
             {
                 object obj = new
                 {
-                    mediaId = media.MediaId,
+                    mediaId = media.Id,
                     fileName = Newtonsoft.Json.JsonConvert.SerializeObject(media.DateTime),
-                    thumbnail = File.ReadAllBytes("thumbnails/" + media.MediaId.ToString()+ ".jpg")
+                    thumbnail = File.ReadAllBytes("thumbnails/" + media.Id.ToString()+ ".jpg")
                 };
                 itemInformations.Add(obj);
             }
@@ -80,11 +80,11 @@ namespace CommunicaptionBackend.Api {
             var user = mainContext.Users.SingleOrDefault(x => x.Pin == pin);
             if (user == null)
                 return 0;
-            return user.UserId;
+            return user.Id;
         }
 
         public bool CheckUserExists(int userId) {
-            var user = mainContext.Users.SingleOrDefault(x => x.UserId == userId);
+            var user = mainContext.Users.SingleOrDefault(x => x.Id == userId);
             if (user == null)
                 return false;
             return true;
@@ -99,7 +99,7 @@ namespace CommunicaptionBackend.Api {
             mainContext.Users.Add(user);
             mainContext.SaveChanges();
 
-            return user.UserId;
+            return user.Id;
         }
 
         public int ConnectWithHoloLens(string pin) {
@@ -108,7 +108,7 @@ namespace CommunicaptionBackend.Api {
             if (userId == 0)
                 return 0;
             else {
-                var user = mainContext.Users.SingleOrDefault(x => userId == x.UserId);
+                var user = mainContext.Users.SingleOrDefault(x => userId == x.Id);
                 user.Connected = true;
 
                 mainContext.Users.Update(user);

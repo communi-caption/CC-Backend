@@ -44,7 +44,7 @@ namespace CommunicaptionBackend.Core
             mediaContext.Medias.Add(media);
             mediaContext.SaveChanges();
 
-            string filename = media.MediaId.ToString();
+            string filename = media.Id.ToString();
             string saveImagePath = ("medias/") + filename;
             File.WriteAllBytes(saveImagePath, message.Data);
 

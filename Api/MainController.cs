@@ -19,6 +19,11 @@ namespace CommunicaptionBackend.Api {
             this.mainService = mainService;
         }
 
+        [HttpGet("")]
+        public IActionResult Index() {
+            return Ok("slm nbr?");
+        }
+
         [HttpGet("pin")]
         public IActionResult GeneratePin() {
             return ActionResults.Json(new {
