@@ -16,5 +16,6 @@ namespace CommunicaptionBackend.Api
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<MediaEntity> Medias { get; set; }
         public DbSet<SettingsEntity> Settings { get; set; }
+        public DbSet<TextEntity> Texts { get; set; }
     }
 }

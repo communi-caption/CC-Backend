@@ -73,7 +73,11 @@ namespace CommunicaptionBackend.Api {
         public void PushMessage(Message message) {
             if (message is SaveMediaMessage) {
                 messageProcessor.ProcessMessage(message);
-            } else {
+            }
+            else if (message is SaveTextMessage) {
+                messageProcessor.ProcessMessage(message);
+            }
+            else {
                 messageQueue.PushMessage(message);
             }
         }

@@ -74,6 +74,15 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
+        [HttpPost("saveTextMessage")]
+        public IActionResult SaveTextMessage([FromBody] SaveTextMessage message) {
+            mainService.PushMessage(message);
+
+            return ActionResults.Json(new {
+                message = "Pushed Message."
+            });
+        }
+
         [HttpGet("getMessages")]
         public IActionResult GetMessages(int userId)
         {
