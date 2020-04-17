@@ -112,13 +112,17 @@ namespace CommunicaptionBackend.Core
 
         private void SaveSettingsToDB(SettingsChangedMessage message)
         {
-            var settings = new SettingsEntity();
-            settings.UserId = message.UserId;
-
-            string result = JsonConvert.SerializeObject(message);
-            settings.Json = result;
-
-            mainContext.Settings.Add(settings);
+            var settings = mainContext.Settings.FirstOrDefault();
+            if (settings == null) {
+                settings = new SettingsEntity();
+                settings.UserId = message.UserId;
+                settings.Json = JsonConvert.SerializeObject(message);
+                mainContext.Settings.Add(settings);
+            } else {
+                settings.UserId = message.UserId;
+                settings.Json = JsonConvert.SerializeObject(message);
+                mainContext.Settings.Update(settings);
+            }
             mainContext.SaveChanges();
         }
     }
