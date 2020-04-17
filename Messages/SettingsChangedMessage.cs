@@ -7,10 +7,10 @@ namespace CommunicaptionBackend.Messages
 {
     public class SettingsChangedMessage : Message
     {
-        public string Mode { get; set; }
-        public string NativeLanguageCode { get; set; }
-        public string ForeignLanguageCode { get; set; }
-        public string SubtitleTrigger { get; set; }
-        public string TranslateLanguage { get; set; }
+        public string Mode { get; set; } = "0";
+        public string NativeLanguageCode { get; set; } = "tr";
+        public string ForeignLanguageCode { get; set; } = "en";
+        public string SubtitleTrigger { get; set; } = "0";
+        public string TranslateLanguage { get; set; } = "0";
     }
 }

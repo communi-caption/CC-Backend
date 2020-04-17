@@ -83,6 +83,24 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
+        [HttpPost("saveSettingsMessage")]
+        public IActionResult SaveSettings([FromBody] SettingsChangedMessage message) {
+            mainService.PushMessage(message);
+
+            return ActionResults.Json(new {
+                message = "Pushed Message."
+            });
+        }
+
+        [HttpGet("getSettings")]
+        public IActionResult GetSettings(int userId) {
+            return new ContentResult {
+                Content = mainService.GetUserSettings(userId),
+                ContentType = "application/json",
+                StatusCode = 200
+            };
+        }
+
         [HttpGet("getMessages")]
         public IActionResult GetMessages(int userId)
         {

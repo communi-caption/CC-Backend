@@ -7,6 +7,7 @@ using CommunicaptionBackend.Api;
 using CommunicaptionBackend.Core;
 using CommunicaptionBackend.Entities;
 using CommunicaptionBackend.Messages;
+using Newtonsoft.Json;
 
 namespace CommunicaptionBackend.Api {
 
@@ -77,6 +78,9 @@ namespace CommunicaptionBackend.Api {
             else if (message is SaveTextMessage) {
                 messageProcessor.ProcessMessage(message);
             }
+            else if (message is SettingsChangedMessage) {
+                messageProcessor.ProcessMessage(message);
+            }
             else {
                 messageQueue.PushMessage(message);
             }
@@ -126,6 +130,13 @@ namespace CommunicaptionBackend.Api {
 
                 return userId;
             }
+        }
+
+        public string GetUserSettings(int userId) {
+            var settings = mainContext.Settings.FirstOrDefault(x => x.UserId == userId);
+            if (settings == null)
+                return JsonConvert.SerializeObject(new SettingsChangedMessage());
+            return settings.Json;
         }
     }
 }

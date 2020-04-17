@@ -31,5 +31,7 @@ namespace CommunicaptionBackend.Api {
         public int ConnectWithoutHoloLens();
         
         public int ConnectWithHoloLens(string pin);
+
+        public string GetUserSettings(int userId);
     }
 }
