@@ -19,7 +19,7 @@ namespace CommunicaptionBackend {
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder => {
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.UseUrls($"http://127.0.0.1:5001/");
+                    webBuilder.UseUrls($"http://127.0.0.1:5004/");
                 });
     }
 }

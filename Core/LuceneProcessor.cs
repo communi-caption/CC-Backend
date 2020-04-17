@@ -5,7 +5,6 @@ using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
-using Lucene.Net.Suggest;
 using Newtonsoft.Json;
 using Lucene.Net.Search.Spell;
 using System.IO;
