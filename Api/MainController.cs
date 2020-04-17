@@ -31,6 +31,11 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
+        [HttpGet("debugMedia")]
+        public IActionResult DebugMedia(string fileName) {
+            return File(System.IO.File.ReadAllBytes("medias/" + fileName), "image/jpeg");
+        }
+
         [HttpGet("media")]
         public IActionResult GetMedia(int userId, string mediaId) {
             return File(mainService.GetMediaData(mediaId), "application/octet-stream");
