@@ -29,8 +29,10 @@ namespace CommunicaptionBackend.Core
             // Ensures index backwards compatibility
             var AppLuceneVersion = LuceneVersion.LUCENE_48;
 
-            var indexLocation = @"C:\Users\catal\Desktop\imges";
-            dir = FSDirectory.Open(indexLocation);
+            //var indexLocation = @"C:\Users\catal\Desktop\try";
+            System.IO.Directory.CreateDirectory("index");
+            var path = System.IO.Directory.GetCurrentDirectory() + @"\index";
+            dir = FSDirectory.Open(path);
            // IndexWriter.Unlock(dir);
 
             //create an analyzer to process the text
