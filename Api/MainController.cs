@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using CommunicaptionBackend.Api;
 using CommunicaptionBackend.Core;
+using CommunicaptionBackend.Entities;
 using CommunicaptionBackend.Messages;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -13,9 +14,9 @@ namespace CommunicaptionBackend.Api {
 
     [Route("/")]
     public class MainController : ControllerBase {
-        private readonly IMainService mainService;
+        private readonly MainService mainService;
 
-        public MainController(IMainService mainService) {
+        public MainController(MainService mainService) {
             this.mainService = mainService;
         }
 
@@ -45,6 +46,11 @@ namespace CommunicaptionBackend.Api {
         public IActionResult Search(string json)
         {
             return File(mainService.getSearchResult(json), "application/octet-stream");
+        }
+
+        [HttpGet("gallery")]
+        public IActionResult Gallery(int userId) {
+            return ActionResults.Json(mainService.GetGallery(userId));
         }
 
         [HttpGet("mediaItems")]
@@ -152,6 +158,14 @@ namespace CommunicaptionBackend.Api {
             int userId = mainService.ConnectWithoutHoloLens();
             return ActionResults.Json(new {
                 userId = userId
+            });
+        }
+
+        [HttpPost("createArt")]
+        public IActionResult CreateArt(int userId, string artTitle) {
+            int artId = mainService.CreateArt(userId, artTitle);
+            return ActionResults.Json(new {
+                artId = artId
             });
         }
     }

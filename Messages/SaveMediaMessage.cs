@@ -8,6 +8,7 @@ namespace CommunicaptionBackend.Messages
 {
     public class SaveMediaMessage : Message
     {
+        public int ArtId { get; set; }
         public int FileSize { get; set; }
         public bool MediaType { get; set; }
         public byte[] Data { get; set; }

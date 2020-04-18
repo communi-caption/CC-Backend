@@ -53,6 +53,8 @@ namespace CommunicaptionBackend.Core
             media.UserId = message.UserId;
             media.Size = message.FileSize;
             media.DateTime = DateTime.Now;
+            media.ArtId = message.ArtId;
+
             mainContext.Medias.Add(media);
             mainContext.SaveChanges();
 
@@ -79,6 +81,7 @@ namespace CommunicaptionBackend.Core
             textEntity.UserId = message.UserId;
             textEntity.DateTime = DateTime.Now;
             textEntity.Text = text;
+            textEntity.ArtId = message.ArtId;
 
             mainContext.Texts.Add(textEntity);
             mainContext.SaveChanges();

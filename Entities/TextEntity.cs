@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CommunicaptionBackend.Entities {
 
@@ -7,5 +8,6 @@ namespace CommunicaptionBackend.Entities {
         public int UserId { get; set; }
         public DateTime DateTime { get; set; }
         public string Text { get; set; }
+        public int ArtId { get; set; }
     }
 }
