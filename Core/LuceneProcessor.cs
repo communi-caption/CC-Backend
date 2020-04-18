@@ -24,7 +24,7 @@ namespace CommunicaptionBackend.Core
             // Ensures index backwards compatibility
             var AppLuceneVersion = LuceneVersion.LUCENE_48;
 
-            var indexLocation = @"C:\Index";
+            var indexLocation = @"C:\Users\catal\Desktop\imges";
             var dir = FSDirectory.Open(indexLocation);
 
             //create an analyzer to process the text
@@ -33,7 +33,7 @@ namespace CommunicaptionBackend.Core
             //create an index writer
             indexConfig = new IndexWriterConfig(AppLuceneVersion, analyzer);
             writer = new IndexWriter(dir, indexConfig);
-            spellChecker = new SpellChecker(dir);
+            //spellChecker = new SpellChecker(dir);
         }
 
         public void AddToTheIndex()
@@ -79,7 +79,6 @@ namespace CommunicaptionBackend.Core
             foreach (var hit in hits)
             {
                 var foundDoc = searcher.Doc(hit.Doc);
-
             }
 
         }

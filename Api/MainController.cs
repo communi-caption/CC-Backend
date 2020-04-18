@@ -44,7 +44,11 @@ namespace CommunicaptionBackend.Api {
         [HttpGet("search")]
         public IActionResult Search(string json)
         {
-            return File(mainService.getSearchResult(json), "application/octet-stream");
+            var result = mainService.getSearchResult(json);
+            return ActionResults.Json(new
+            {
+                message = result
+            });
         }
 
         [HttpGet("mediaItems")]

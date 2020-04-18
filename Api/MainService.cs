@@ -47,11 +47,10 @@ namespace CommunicaptionBackend.Api {
             return File.ReadAllBytes("medias/" + mediaId);
         }
 
-        public byte[] getSearchResult(string searchInputJson)
+        public string getSearchResult(string searchInputJson)
         {
             luceneProcessor.FetchResults(searchInputJson);
-            string mediaId = ""; //Search result will return specific media
-            return File.ReadAllBytes("medias/" + mediaId);
+            return "search request";
         }
 
         public List<object> GetMediaItems(int userId)
