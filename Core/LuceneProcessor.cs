@@ -8,6 +8,9 @@ using Lucene.Net.Util;
 using Newtonsoft.Json;
 using Lucene.Net.Search.Spell;
 using System.IO;
+using System;
+using System.Collections.Generic;
+using CommunicaptionBackend.Entities;
 
 namespace CommunicaptionBackend.Core
 {
@@ -17,15 +20,18 @@ namespace CommunicaptionBackend.Core
         private IndexWriterConfig indexConfig;
         private IndexWriter writer;
         private IndexReader reader;
+        private FSDirectory dir;
         private SpellChecker spellChecker;
 
+        [Obsolete]
         public LuceneProcessor()
         {
             // Ensures index backwards compatibility
             var AppLuceneVersion = LuceneVersion.LUCENE_48;
 
             var indexLocation = @"C:\Users\catal\Desktop\imges";
-            var dir = FSDirectory.Open(indexLocation);
+            dir = FSDirectory.Open(indexLocation);
+           // IndexWriter.Unlock(dir);
 
             //create an analyzer to process the text
             analyzer = new StandardAnalyzer(AppLuceneVersion);
@@ -36,42 +42,52 @@ namespace CommunicaptionBackend.Core
             //spellChecker = new SpellChecker(dir);
         }
 
-        public void AddToTheIndex()
+        public List<SearchArtTextRequest> getArtList(List<TextEntity> textEntityList)
         {
-            var source = new
+            List<SearchArtTextRequest> newArtTextList = new List<SearchArtTextRequest>();
+            foreach (var item in textEntityList)
             {
-                Name = "Kermit the Frog",
-                FavoritePhrase = "The quick brown fox jumps over the lazy dog"
-            };
+                newArtTextList.Add(new SearchArtTextRequest()
+                {
+                    ArtId = item.ArtId.ToString(),
+                    Text = item.Text
+                });
+            }
+            return newArtTextList;
+        }
 
-            Document doc = new Document
+        [Obsolete]
+        public void AddToTheIndex(List<SearchArtTextRequest> artObject)
+        {
+            foreach(var obj in artObject)
             {
-            // StringField indexes but doesn't tokenize
-            new StringField("name",
-                source.Name,
-                Field.Store.YES),
-            new TextField("favoritePhrase",
-                source.FavoritePhrase,
-                Field.Store.YES)
-            };
+                Document doc = new Document
+                {
+                // StringField indexes but doesn't tokenize
+                new StringField("artId",
+                    obj.ArtId,
+                    Field.Store.YES),
+                new TextField("text",
+                    obj.Text,
+                    Field.Store.YES)
+                };
 
-            writer.AddDocument(doc);
+                writer.AddDocument(doc);
+            }
+            
             writer.Flush(triggerMerge: false, applyAllDeletes: false);
         }
 
-        public void FetchResults(string json)
+        public string FetchResults(string json)
         {
+            List<SearchArtTextRequest> resultList = new List<SearchArtTextRequest>();
+
             var searchRequest = JsonConvert.DeserializeObject<SearchRequest>(json);
             var keyword = searchRequest.keyword;
 
-            if(searchRequest.spellCheck == true)
-            {
-                keyword = suggestSimilar(searchRequest.keyword);
-            }
-
             // search with a phrase
             var phrase = new MultiPhraseQuery();
-            phrase.Add(new Term("keyword", keyword));
+            phrase.Add(new Term("text", keyword));
 
             // re-use the writer to get real-time updates
             var searcher = new IndexSearcher(writer.GetReader(applyAllDeletes: true));
@@ -79,8 +95,11 @@ namespace CommunicaptionBackend.Core
             foreach (var hit in hits)
             {
                 var foundDoc = searcher.Doc(hit.Doc);
+                resultList.Add(new SearchArtTextRequest { 
+                    ArtId = foundDoc.Get("artId"), Text = foundDoc.Get("text")
+                });     
             }
-
+            return JsonConvert.SerializeObject(resultList);
         }
 
         public string suggestSimilar(string query)

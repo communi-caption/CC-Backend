@@ -49,8 +49,9 @@ namespace CommunicaptionBackend.Api {
 
         public string getSearchResult(string searchInputJson)
         {
-            luceneProcessor.FetchResults(searchInputJson);
-            return "search request";
+            var artList = luceneProcessor.getArtList(mainContext.Texts.ToList());
+            luceneProcessor.AddToTheIndex(artList);
+            return luceneProcessor.FetchResults(searchInputJson);
         }
 
         public List<object> GetMediaItems(int userId)

@@ -48,7 +48,7 @@ namespace CommunicaptionBackend.Api {
             var result = mainService.getSearchResult(json);
             return ActionResults.Json(new
             {
-                message = result
+                result
             });
         }
 
