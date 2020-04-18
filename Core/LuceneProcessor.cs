@@ -31,9 +31,9 @@ namespace CommunicaptionBackend.Core
 
             //var indexLocation = @"C:\Users\catal\Desktop\try";
             System.IO.Directory.CreateDirectory("index");
-            var path = System.IO.Directory.GetCurrentDirectory() + @"\index";
+            var path = System.IO.Directory.GetCurrentDirectory() + @"/index";
             dir = FSDirectory.Open(path);
-           // IndexWriter.Unlock(dir);
+            IndexWriter.Unlock(dir);
 
             //create an analyzer to process the text
             analyzer = new StandardAnalyzer(AppLuceneVersion);
