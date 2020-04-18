@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 
 namespace CommunicaptionBackend.Api {
 
-    public class MainService : IMainService {
+    public class MainService {
         private readonly MainContext mainContext;
         private readonly MessageQueue messageQueue;
         private readonly MessageProcessor messageProcessor;
@@ -136,6 +136,44 @@ namespace CommunicaptionBackend.Api {
             if (settings == null)
                 return JsonConvert.SerializeObject(new SettingsChangedMessage());
             return settings.Json;
+        }
+
+        public object GetGallery(int userId) {
+            var artIds = mainContext.Arts.Where(x => x.UserId == userId || x.UserId == 0)
+                .Select(x => x.Id).ToArray();
+
+            var mediaIds = new List<int>();
+            var textIds = new List<int>();
+
+            foreach (var artId in artIds) {
+                mediaIds.AddRange(mainContext.Medias.Where(x => x.ArtId == artId).Select(x => x.Id).ToArray());
+                textIds.AddRange(mainContext.Texts.Where(x => x.ArtId == artId).Select(x => x.Id).ToArray());
+            }
+
+            mediaIds = mediaIds.Distinct().ToList();
+            textIds = textIds.Distinct().ToList();
+
+            var medias = mainContext.Medias.Where(x => mediaIds.Contains(x.Id)).ToList();
+            var texts = mainContext.Texts.Where(x => textIds.Contains(x.Id)).ToList();
+
+            var all = new List<dynamic>();
+            all.AddRange(medias);
+            all.AddRange(texts);
+            all.Sort((x, y) => {
+                return y.DateTime.CompareTo(x.DateTime);
+            });
+
+            return all;
+        }
+
+        public int CreateArt(int userId, string artTitle) {
+            var art = new ArtEntity();
+            art.Title = artTitle;
+            art.UserId = userId;
+
+            mainContext.Arts.Add(art);
+            mainContext.SaveChanges();
+            return art.Id;
         }
     }
 }
