@@ -172,5 +172,7 @@ namespace CommunicaptionBackend.Api {
                 artId = artId
             });
         }
+
+        // POST /createArt?userId=1&artTitle='Kaiski Elması'
     }
 }
