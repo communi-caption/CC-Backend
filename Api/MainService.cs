@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using CommunicaptionBackend.Api;
 using CommunicaptionBackend.Core;
@@ -175,6 +176,43 @@ namespace CommunicaptionBackend.Api {
             mainContext.Arts.Add(art);
             mainContext.SaveChanges();
             return art.Id;
+        }
+
+        private int[] ArtsSimilar(string title) {
+            title = title.ToLowerInvariant();
+            var res = new List<int>();
+            foreach (var item in mainContext.Arts.Select(x => new { x.Id, x.Title }).ToList()) {
+                string t = item.Title.ToLowerInvariant();
+                if (t.Contains(title)) {
+                    res.Add(item.Id);
+                }
+            }
+            return res.ToArray();
+        }
+
+        public int[] Recommend(int userId, int baseArtId) {
+            var artTitle = mainContext.Arts.FirstOrDefault(x => x.Id == baseArtId)?.Title;
+            if (artTitle == null) artTitle = ".";
+
+            var web = new WebClient();
+            web.Proxy = null;
+            web.Headers[HttpRequestHeader.ContentType] = "application/json";
+
+            const string HOST = "http://37.148.210.36:5005";
+
+            var channel1 = JsonConvert.DeserializeObject<int[]>(web.DownloadString($"{HOST}/ch1/recommend/{userId}/{baseArtId}"));
+            var channel2 = JsonConvert.DeserializeObject<int[]>(web.DownloadString($"{HOST}/ch2/similarity/{userId}"));
+            var alsoSearch = JsonConvert.DeserializeObject<string[]>(web.UploadString($"{HOST}/ch3/predict", "POST", artTitle));
+            var channel3 = alsoSearch.Select(x => ArtsSimilar(x));
+
+            var all = new List<int>();
+            all.AddRange(channel1);
+            all.AddRange(channel2);
+            foreach (var item in channel3) {
+                all.AddRange(item);
+            }
+
+            return all.Distinct().ToArray();
         }
     }
 }
