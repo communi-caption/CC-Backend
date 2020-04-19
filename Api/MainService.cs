@@ -255,6 +255,7 @@ namespace CommunicaptionBackend.Api {
             web.UploadString($"{RECOMMENDER_HOST}/ch1/train/", "POST", JsonConvert.SerializeObject(ratings));
 
             var docs = mainContext.Texts.Select(x => new { x.Id, x.Text }).ToList();
+            web.Headers[HttpRequestHeader.ContentType] = "application/json";
             web.UploadString($"{RECOMMENDER_HOST}/ch2/train/", "POST", JsonConvert.SerializeObject(new {
                 Item1 = docs.Select(x => x.Id).ToArray(),
                 Item2 = docs.Select(x => x.Text).ToArray(),
