@@ -42,6 +42,13 @@ namespace CommunicaptionBackend.Api {
             return File(mainService.GetMediaData(mediaId), "application/octet-stream");
         }
 
+        [HttpPost("getDetails")]
+        public IActionResult GetDetails(int artId)
+        {
+            var result = mainService.getDetails(artId);
+            return ActionResults.Json(result);
+        }
+
         [HttpGet("search")]
         public IActionResult Search(string json)
         {

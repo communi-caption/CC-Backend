@@ -47,6 +47,37 @@ namespace CommunicaptionBackend.Api {
             return File.ReadAllBytes("medias/" + mediaId);
         }
 
+        public object getDetails(int artId)
+        {
+            var userId = mainContext.Arts.SingleOrDefault(x => x.Id == artId);
+
+            var mediaItems = GetMediaItems(userId.UserId);
+            var textsRelatedToArt = mainContext.Texts.Where(x => x.ArtId == artId).ToList();
+            string ocrText = "temprorary";
+
+            string wiki = "https://www.wikipedia.org/"; //temprorary
+
+            foreach (var textObject in textsRelatedToArt)
+            {
+                ocrText += @"\n" +  textObject.Text;
+            }
+
+            List<object> recommendationsList = new List<object>();
+            object obj = new
+            {
+                picture = "",
+                url = "https://www.wikipedia.org/"
+            };
+
+            recommendationsList.Add(obj);
+
+            object[] objlist = new object[] {
+                new {items = mediaItems, text = ocrText, wikipedia = wiki, recommendations = recommendationsList}
+            };
+
+            return objlist;
+        }
+
         public string getSearchResult(string searchInputJson)
         {
             var artList = luceneProcessor.getArtList(mainContext.Texts.ToList());
