@@ -261,7 +261,7 @@ namespace CommunicaptionBackend.Api {
         {
             var response = await client.GetStringAsync($"https://app.zenserp.com/api/v2/search?apikey=bf36c2c0-8263-11ea-9b0f-6f1e52de7167&q={title}&lr=lang_tr&hl=tr&location=Turkey&gl=tr");
             var x = JObject.Parse(response);
-            string[] result = x["organic"].Where(x => x["title"] != null && x["title"].ToString().Contains("Vikipescddi")).Select(x => x["url"].ToString()).ToArray();
+            string[] result = x["organic"].Where(x => x["title"] != null && x["title"].ToString().Contains("Vikipedi")).Select(x => x["url"].ToString()).ToArray();
 
             if (result.Length != 0)
                 return result[0];
