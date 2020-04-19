@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using CommunicaptionBackend.Api;
 using CommunicaptionBackend.Core;
@@ -16,6 +17,8 @@ namespace CommunicaptionBackend.Api {
         private readonly MessageQueue messageQueue;
         private readonly MessageProcessor messageProcessor;
         private readonly LuceneProcessor luceneProcessor;
+
+        private const string RECOMMENDER_HOST = "http://37.148.210.36:5005";
 
         public MainService(MainContext mainContext, MessageProcessor messageProcessor, MessageQueue messageQueue, LuceneProcessor luceneProcessor) {
             this.mainContext = mainContext;
@@ -85,21 +88,18 @@ namespace CommunicaptionBackend.Api {
             return luceneProcessor.FetchResults(searchInputJson);
         }
 
-        public List<object> GetMediaItems(int userId)
-        {
+        public List<object> GetMediaItems(int userId) {
             List<object> itemInformations = new List<object>();
             var medias = mainContext.Medias.Where(x => x.UserId == userId);
-            foreach (var media in medias)
-            {
-                object obj = new
-                {
+            foreach (var media in medias) {
+                object obj = new {
                     mediaId = media.Id,
                     fileName = Newtonsoft.Json.JsonConvert.SerializeObject(media.DateTime),
-                    thumbnail = File.ReadAllBytes("thumbnails/" + media.Id.ToString()+ ".jpg")
+                    thumbnail = File.ReadAllBytes("thumbnails/" + media.Id.ToString() + ".jpg")
                 };
                 itemInformations.Add(obj);
             }
-            return itemInformations;         
+            return itemInformations;
         }
 
         public void PushMessage(Message message) {
@@ -206,6 +206,84 @@ namespace CommunicaptionBackend.Api {
             mainContext.Arts.Add(art);
             mainContext.SaveChanges();
             return art.Id;
+        }
+
+        private int[] ArtsSimilar(string title) {
+            title = title.ToLowerInvariant();
+            var res = new List<int>();
+            foreach (var item in mainContext.Arts.Select(x => new { x.Id, x.Title }).ToList()) {
+                string t = item.Title.ToLowerInvariant();
+                if (t.Contains(title)) {
+                    res.Add(item.Id);
+                }
+            }
+            return res.ToArray();
+        }
+
+        public void TriggerTrain() {
+            var web = new WebClient();
+            web.Proxy = null;
+            web.Headers[HttpRequestHeader.ContentType] = "application/json";
+
+            var arts = mainContext.Arts.Select(x => new { x.Id, x.UserId, x.Title });
+
+            var ratings = new List<int[]>();
+            foreach (var item in arts) {
+                ratings.Add(new int[2] { item.UserId, item.Id });
+            }
+            web.UploadString($"{RECOMMENDER_HOST}/ch1/train/", "POST", JsonConvert.SerializeObject(ratings));
+
+            var docs = mainContext.Texts.Select(x => new { x.Id, x.Text }).ToList();
+            web.UploadString($"{RECOMMENDER_HOST}/ch2/train/", "POST", JsonConvert.SerializeObject(new {
+                Item1 = docs.Select(x => x.Id).ToArray(),
+                Item2 = docs.Select(x => x.Text).ToArray(),
+            }));
+        }
+
+        public int[] Recommend(int userId, int baseArtId) {
+            var artTitle = mainContext.Arts.FirstOrDefault(x => x.Id == baseArtId)?.Title;
+            if (artTitle == null) artTitle = ".";
+
+            var web = new WebClient();
+            web.Proxy = null;
+            web.Headers[HttpRequestHeader.ContentType] = "application/json";
+
+
+            var channel1 = JsonConvert.DeserializeObject<int[]>(web.DownloadString($"{RECOMMENDER_HOST}/ch1/recommend/{userId}/{baseArtId}"));
+            var channel2 = JsonConvert.DeserializeObject<int[]>(web.DownloadString($"{RECOMMENDER_HOST}/ch2/similarity/{userId}"));
+            var alsoSearch = JsonConvert.DeserializeObject<string[]>(web.UploadString($"{RECOMMENDER_HOST}/ch3/predict", "POST", artTitle));
+            var channel3 = alsoSearch.Select(x => ArtsSimilar(x));
+
+            var all = new List<int>();
+            all.AddRange(channel1);
+            all.AddRange(channel2);
+            foreach (var item in channel3) {
+                all.AddRange(item);
+            }
+
+            return all.Distinct().ToArray();
+        }
+
+        public string TrainDebug() {
+            var web = new WebClient();
+            web.Proxy = null;
+            web.Headers[HttpRequestHeader.ContentType] = "application/json";
+            return web.DownloadString($"{RECOMMENDER_HOST}/ch1/info");
+        }
+
+        public int[] LocationBasedRecommendation(float latitude, float longitude)
+        {
+            var info = mainContext.Arts.Select(x => new { x.Id, x.Latitude, x.Longitude }).ToList();
+            List<double[]> sortedList = new List<double[]>();
+
+            for (int i = 0; i < info.Count; i++)
+            {
+                double distance = Math.Pow(latitude - info[i].Latitude, 2) + Math.Pow(longitude - info[i].Longitude, 2);
+                sortedList.Add(new double[] { info[i].Id, distance });
+            }
+
+            sortedList.OrderBy(x => x[1]);
+            return sortedList.Take(5).Select(x => Convert.ToInt32(x[0])).ToArray();
         }
     }
 }

@@ -179,5 +179,16 @@ namespace CommunicaptionBackend.Api {
                 artId = artId
             });
         }
+
+        [HttpGet("triggerTrain")]
+        public IActionResult TriggerTrain() {
+            mainService.TriggerTrain();
+            return Ok("trained");
+        }
+
+        [HttpGet("trainDebug")]
+        public IActionResult TrainDebug() {
+            return Ok(mainService.TrainDebug());
+        }
     }
 }
