@@ -11,6 +11,8 @@ using System.IO;
 using System;
 using System.Collections.Generic;
 using CommunicaptionBackend.Entities;
+using System.Text;
+using System.Globalization;
 
 namespace CommunicaptionBackend.Core
 {
@@ -98,10 +100,34 @@ namespace CommunicaptionBackend.Core
             {
                 var foundDoc = searcher.Doc(hit.Doc);
                 resultList.Add(new SearchArtTextRequest { 
-                    ArtId = foundDoc.Get("artId"), Text = foundDoc.Get("text")
+                    ArtId = foundDoc.Get("artId"), Text = HighlightText(searchRequest.keyword, foundDoc.Get("text"))
                 });     
             }
             return JsonConvert.SerializeObject(resultList);
+        }
+
+        private static string HighlightText(string keyword, string text) {
+            keyword = keyword.Trim();
+            if (keyword.Length < 2)
+                return text;
+
+            if (text.Length > 50) {
+                int index = text.IndexOf(keyword);
+                index = Math.Max(index - 10, 0);
+                text = text.Substring(index);
+                int length = Math.Min(text.Length, 50);
+                text = text.Substring(0, length);
+            }
+
+            var lowerKey = keyword.ToLowerInvariant();
+            var upperKey = keyword.ToUpperInvariant();
+            var titleKey = new CultureInfo("en-US").TextInfo.ToTitleCase(keyword);
+
+            text = text.Replace(lowerKey, $"<color=yellow>{lowerKey}</color>");
+            text = text.Replace(upperKey, $"<color=yellow>{upperKey}</color>");
+            text = text.Replace(titleKey, $"<color=yellow>{titleKey}</color>");
+
+            return text;
         }
 
         public string suggestSimilar(string query)
