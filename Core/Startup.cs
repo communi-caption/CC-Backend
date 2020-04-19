@@ -33,6 +33,7 @@ namespace CommunicaptionBackend {
             services.AddSingleton<MessageQueue>();
             services.AddScoped<MessageProcessor>();
             services.AddSingleton<LuceneProcessor>();
+            services.AddHostedService<TrainTriggerService>();
 
             services.AddDbContext<MainContext>(opt =>
                 opt.UseInMemoryDatabase("main")

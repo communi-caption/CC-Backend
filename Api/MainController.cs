@@ -173,6 +173,15 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
-        // POST /createArt?userId=1&artTitle='Kaiski Elması'
+        [HttpGet("triggerTrain")]
+        public IActionResult TriggerTrain() {
+            mainService.TriggerTrain();
+            return Ok("trained");
+        }
+
+        [HttpGet("trainDebug")]
+        public IActionResult TrainDebug() {
+            return Ok(mainService.TrainDebug());
+        }
     }
 }
