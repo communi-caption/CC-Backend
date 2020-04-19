@@ -20,7 +20,7 @@ namespace CommunicaptionBackend.Api {
             this.mainService = mainService;
         }
 
-        [HttpGet("")]
+        [HttpGet("")] //tested
         public IActionResult Index() {
             return Ok("slm nbr?");
         }
