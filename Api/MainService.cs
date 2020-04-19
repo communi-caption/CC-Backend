@@ -53,7 +53,59 @@ namespace CommunicaptionBackend.Api {
             return File.ReadAllBytes("medias/" + mediaId);
         }
 
-        public string getSearchResult(string searchInputJson) {
+        public object getDetails(int artId)
+        {
+            var artInfo = mainContext.Arts.SingleOrDefault(x => x.Id == artId);
+
+            var mediaItems = GetMediaItems(artInfo.UserId);
+            var textsRelatedToArt = mainContext.Texts.Where(x => x.ArtId == artId).ToList();
+            string ocrText = "";
+
+            var wiki = GetWikipediaLink(artInfo.Title).Result; //temprorary
+
+            foreach (var textObject in textsRelatedToArt)
+            {
+                ocrText += @"\n" +  textObject.Text;
+            }
+
+            List<object> recommendationsList = new List<object>();
+
+            int[] recommedArr = Recommend(artInfo.UserId, artId);
+            for (int i = 0; i < recommedArr.Length; i++)
+            {
+                var artInf = mainContext.Arts.SingleOrDefault(x => x.Id == recommedArr[i]);
+                var mediaInfo = mainContext.Medias.SingleOrDefault(x => x.ArtId == artInf.Id);
+                object obj = new
+                {
+                    picture = "medias/"+ mediaInfo.Id,
+                    url = GetWikipediaLink(artInf.Title).Result
+                };
+
+                recommendationsList.Add(obj);
+            }
+
+            int[] recommedArrL = LocationBasedRecommendation(artInfo.Latitude, artInfo.Longitude);
+            for (int i = 0; i < recommedArrL.Length; i++)
+            {
+                var artInf = mainContext.Arts.SingleOrDefault(x => x.Id == recommedArrL[i]);
+                var mediaInfo = mainContext.Medias.SingleOrDefault(x => x.ArtId == artInf.Id);
+                object obj = new
+                {
+                    picture = "medias/" + mediaInfo.Id,
+                    url = GetWikipediaLink(artInf.Title).Result
+                };
+                recommendationsList.Add(obj);
+            }
+           
+            object[] objlist = new object[] {
+                new {items = mediaItems, text = ocrText, wikipedia = wiki, recommendations = recommendationsList}
+            };
+
+            return objlist;
+        }
+
+        public string getSearchResult(string searchInputJson)
+        {
             var artList = luceneProcessor.getArtList(mainContext.Texts.ToList());
             luceneProcessor.AddToTheIndex(artList);
             return luceneProcessor.FetchResults(searchInputJson);
@@ -218,7 +270,6 @@ namespace CommunicaptionBackend.Api {
             var web = new WebClient();
             web.Proxy = null;
             web.Headers[HttpRequestHeader.ContentType] = "application/json";
-
 
             var channel1 = JsonConvert.DeserializeObject<int[]>(web.DownloadString($"{RECOMMENDER_HOST}/ch1/recommend/{userId}/{baseArtId}"));
             var channel2 = JsonConvert.DeserializeObject<int[]>(web.DownloadString($"{RECOMMENDER_HOST}/ch2/similarity/{userId}"));
