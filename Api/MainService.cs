@@ -59,7 +59,7 @@ namespace CommunicaptionBackend.Api {
 
             var mediaItems = GetMediaItems(artInfo.UserId);
             var textsRelatedToArt = mainContext.Texts.Where(x => x.ArtId == artId).ToList();
-            string ocrText = "temprorary";
+            string ocrText = "";
 
             var wiki = GetWikipediaLink(artInfo.Title).Result; //temprorary
 
