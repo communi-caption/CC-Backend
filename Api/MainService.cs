@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using CommunicaptionBackend.Api;
 using CommunicaptionBackend.Core;
 using CommunicaptionBackend.Entities;
 using CommunicaptionBackend.Messages;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace CommunicaptionBackend.Api {
 
@@ -17,6 +19,7 @@ namespace CommunicaptionBackend.Api {
         private readonly MessageQueue messageQueue;
         private readonly MessageProcessor messageProcessor;
         private readonly LuceneProcessor luceneProcessor;
+        private static readonly HttpClient client = new HttpClient();
 
         private const string RECOMMENDER_HOST = "http://37.148.210.36:5005";
 
@@ -284,6 +287,18 @@ namespace CommunicaptionBackend.Api {
 
             sortedList.OrderBy(x => x[1]);
             return sortedList.Take(5).Select(x => Convert.ToInt32(x[0])).ToArray();
+        }
+
+        public async Task<string> GetWikipediaLink(string title)
+        {
+            var response = await client.GetStringAsync($"https://app.zenserp.com/api/v2/search?apikey=bf36c2c0-8263-11ea-9b0f-6f1e52de7167&q={title}&lr=lang_tr&hl=tr&location=Turkey&gl=tr");
+            var x = JObject.Parse(response);
+            string[] result = x["organic"].Where(x => x["title"] != null && x["title"].ToString().Contains("Vikipedi")).Select(x => x["url"].ToString()).ToArray();
+
+            if (result.Length != 0)
+                return result[0];
+            else
+                return x["query"]["url"].ToString();
         }
     }
 }
