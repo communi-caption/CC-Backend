@@ -22,7 +22,7 @@ namespace CommunicaptionBackend.Api {
         private readonly LuceneProcessor luceneProcessor;
         private static readonly HttpClient client = new HttpClient();
 
-        private const string RECOMMENDER_HOST = "http://37.148.210.36:5005";
+        private const string RECOMMENDER_HOST = "http://37.148.210.36:8082";
 
         public MainService(MainContext mainContext, MessageProcessor messageProcessor, MessageQueue messageQueue, LuceneProcessor luceneProcessor) {
             this.mainContext = mainContext;
