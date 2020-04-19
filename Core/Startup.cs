@@ -30,6 +30,7 @@ namespace CommunicaptionBackend {
         public void ConfigureServices(IServiceCollection services) {
             services.AddRazorPages();
             services.AddScoped<MainService>();
+            services.AddScoped<LocationService>();
             services.AddSingleton<MessageQueue>();
             services.AddScoped<MessageProcessor>();
             services.AddSingleton<LuceneProcessor>();
