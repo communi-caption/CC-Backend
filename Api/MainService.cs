@@ -22,7 +22,7 @@ namespace CommunicaptionBackend.Api {
         private readonly LuceneProcessor luceneProcessor;
         private static readonly HttpClient client = new HttpClient();
 
-        private const string RECOMMENDER_HOST = "http://37.148.210.36:5005";
+        private const string RECOMMENDER_HOST = "http://37.148.210.36:8082";
 
       
         public MainService(MainContext mainContext, MessageProcessor messageProcessor, MessageQueue messageQueue, LuceneProcessor luceneProcessor) {
@@ -261,6 +261,7 @@ namespace CommunicaptionBackend.Api {
             web.UploadString($"{RECOMMENDER_HOST}/ch1/train/", "POST", JsonConvert.SerializeObject(ratings));
 
             var docs = mainContext.Texts.Select(x => new { x.Id, x.Text }).ToList();
+            web.Headers[HttpRequestHeader.ContentType] = "application/json";
             web.UploadString($"{RECOMMENDER_HOST}/ch2/train/", "POST", JsonConvert.SerializeObject(new {
                 Item1 = docs.Select(x => x.Id).ToArray(),
                 Item2 = docs.Select(x => x.Text).ToArray(),
