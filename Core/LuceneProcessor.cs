@@ -28,6 +28,7 @@ namespace CommunicaptionBackend.Core
         [Obsolete]
         public LuceneProcessor()
         {
+#if LUCENE
             // Ensures index backwards compatibility
             var AppLuceneVersion = LuceneVersion.LUCENE_48;
 
@@ -44,10 +45,12 @@ namespace CommunicaptionBackend.Core
             indexConfig = new IndexWriterConfig(AppLuceneVersion, analyzer);
             writer = new IndexWriter(dir, indexConfig);
             //spellChecker = new SpellChecker(dir);
+#endif
         }
 
         public List<SearchArtTextRequest> getArtList(List<TextEntity> textEntityList)
         {
+#if LUCENE
             List<SearchArtTextRequest> newArtTextList = new List<SearchArtTextRequest>();
             foreach (var item in textEntityList)
             {
@@ -58,11 +61,14 @@ namespace CommunicaptionBackend.Core
                 });
             }
             return newArtTextList;
+#endif
+            return new List<SearchArtTextRequest>();
         }
 
         [Obsolete]
         public void AddToTheIndex(List<SearchArtTextRequest> artObject)
         {
+#if LUCENE
             foreach(var obj in artObject)
             {
                 Document doc = new Document
@@ -80,10 +86,12 @@ namespace CommunicaptionBackend.Core
             }
             
             writer.Flush(triggerMerge: false, applyAllDeletes: false);
+#endif
         }
 
         public string FetchResults(string json)
         {
+#if LUCENE
             List<SearchArtTextRequest> resultList = new List<SearchArtTextRequest>();
 
             var searchRequest = JsonConvert.DeserializeObject<SearchRequest>(json);
@@ -111,9 +119,12 @@ namespace CommunicaptionBackend.Core
             Console.Error.WriteLine(JsonConvert.SerializeObject(resultList));
             Console.Error.WriteLine("---");
             return JsonConvert.SerializeObject(resultList);
+#endif
+            return "[]";
         }
 
         private static string HighlightText(string keyword, string text) {
+#if LUCENE
             keyword = keyword.Trim();
             if (keyword.Length < 2)
                 return text;
@@ -135,10 +146,13 @@ namespace CommunicaptionBackend.Core
             text = text.Replace(titleKey, $"<color=yellow>{titleKey}</color>");
 
             return text;
+#endif
+            return text;
         }
 
         public string suggestSimilar(string query)
         {
+            return query;
             reader = writer.GetReader(true);
             spellChecker.IndexDictionary(new LuceneDictionary(reader, "keyword"), indexConfig, true);
             // To index a file containing words:

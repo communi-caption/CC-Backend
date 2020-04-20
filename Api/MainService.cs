@@ -32,6 +32,42 @@ namespace CommunicaptionBackend.Api {
             this.luceneProcessor = luceneProcessor;
         }
 
+        public void ClearDb() {
+            mainContext.Arts.RemoveRange(from c in mainContext.Arts select c);
+            mainContext.Users.RemoveRange(from c in mainContext.Users select c);
+            mainContext.Medias.RemoveRange(from c in mainContext.Medias select c);
+            mainContext.Settings.RemoveRange(from c in mainContext.Settings select c);
+            mainContext.Texts.RemoveRange(from c in mainContext.Texts select c);
+            mainContext.SaveChanges();
+        }
+
+        public void SetDump(DumpWrapper dumpWrapper) {
+            ClearDb();
+
+            mainContext.Arts.AddRange(dumpWrapper.Arts);
+            //mainContext.Users.AddRange(dumpWrapper.Users);
+            mainContext.Medias.AddRange(dumpWrapper.Medias);
+            mainContext.Settings.AddRange(dumpWrapper.Settings);
+            mainContext.Texts.AddRange(dumpWrapper.Texts);
+
+            if (!Directory.Exists("medias"))
+                Directory.CreateDirectory("medias");
+            if (!Directory.Exists("thumbnails"))
+                Directory.CreateDirectory("thumbnails");
+            int id = 1;
+            foreach (var item in dumpWrapper.MediaBase64) {
+                string filename = id + "";
+                string saveImagePath = ("medias/") + filename;
+                File.WriteAllBytes(saveImagePath, Convert.FromBase64String(item));
+
+                string saveThumbnPath = ("thumbnails/") + filename + ".jpg";
+                File.WriteAllBytes(saveThumbnPath, Convert.FromBase64String(item));
+
+                id++;
+            }
+            mainContext.SaveChanges();
+        }
+
         public void DisconnectDevice(int userId) {
             var user = mainContext.Users.SingleOrDefault(x => userId == x.Id);
             if (user == null)
@@ -59,7 +95,7 @@ namespace CommunicaptionBackend.Api {
 
         public object getDetails(int artId)
         {
-            var artInfo = mainContext.Arts.SingleOrDefault(x => x.Id == artId);
+            var artInfo = mainContext.Arts.FirstOrDefault(x => x.Id == artId);
 
             var mediaItems = GetMediaItems(artInfo.UserId);
             var textsRelatedToArt = mainContext.Texts.Where(x => x.ArtId == artId).ToList();
@@ -81,7 +117,7 @@ namespace CommunicaptionBackend.Api {
                 var mediaInfo = mainContext.Medias.FirstOrDefault(x => x.ArtId == artInf.Id);
                 object obj = new
                 {
-                    picture = "medias/"+ mediaInfo.Id,
+                    picture = mediaInfo == null ? "" : Convert.ToBase64String(GetMediaData(mediaInfo.Id + "")),
                     url = artInf.link
                 };
 
@@ -95,7 +131,7 @@ namespace CommunicaptionBackend.Api {
                 var mediaInfo = mainContext.Medias.FirstOrDefault(x => x.ArtId == artInf.Id);
                 object obj = new
                 {
-                    picture = "medias/" + mediaInfo.Id,
+                    picture = mediaInfo == null ? "" : Convert.ToBase64String(GetMediaData(mediaInfo.Id + "")),
                     url = artInf.link
                 };
                 recommendationsList.Add(obj);
@@ -118,7 +154,7 @@ namespace CommunicaptionBackend.Api {
             };
         }
 
-        public string getSearchResult(string searchInputJson)
+        public object getSearchResult(string searchInputJson)
         {
             var searchRequest = JsonConvert.DeserializeObject<SearchRequest>(searchInputJson);
             var keyw = searchRequest.keyword.ToLowerInvariant().Trim();
@@ -126,9 +162,7 @@ namespace CommunicaptionBackend.Api {
             Console.Error.WriteLine(keyw);
             Console.Error.WriteLine(JsonConvert.SerializeObject(mainContext.Texts.Select(x => x.Text.ToLowerInvariant()).ToList()));
 
-            var all = mainContext.Texts.Where(x => x.Text.ToLowerInvariant().Contains(keyw)).Select(x => new { x.ArtId, x.Text }).ToList();
-            Console.Error.WriteLine(JsonConvert.SerializeObject(all));
-            return JsonConvert.SerializeObject(all);
+            return mainContext.Texts.Where(x => x.Text.ToLowerInvariant().Contains(keyw)).Select(x => new { x.ArtId, x.Text }).ToList();
         }
 
         public List<object> GetMediaItems(int userId) {
@@ -285,7 +319,20 @@ namespace CommunicaptionBackend.Api {
         }
 
         public int[] Recommend(int userId, int baseArtId) {
-            return new int[] { 1 };
+            var random = new Random();
+            int length = random.Next(9, 14);
+            var arts = mainContext.Arts.Select(x => x.Id).ToList();
+
+            var list = new List<int>();
+            for (int i = 0; i < length; i++) {
+                var j = arts[random.Next(0, arts.Count)];
+                if (j != baseArtId) {
+                    list.Add(j);
+                }
+            }
+            list = list.Distinct().ToList();
+            return list.ToArray();
+
             var artTitle = mainContext.Arts.FirstOrDefault(x => x.Id == baseArtId)?.Title;
             if (artTitle == null) artTitle = ".";
 
@@ -332,7 +379,7 @@ namespace CommunicaptionBackend.Api {
 
         public async Task<string> GetWikipediaLink(string title)
         {
-            var response = await client.GetStringAsync($"https://app.zenserp.com/api/v2/search?apikey=33bf6160-82ae-11ea-b331-c350760a9587&q={title}&lr=lang_tr&hl=tr&location=Turkey&gl=tr");
+            var response = await client.GetStringAsync($"https://app.zenserp.com/api/v2/search?apikey=84e54510-82ae-11ea-8e99-b9e63392392d&q={title}&lr=lang_tr&hl=tr&location=Turkey&gl=tr");
             var x = JObject.Parse(response);
             string[] result = x["organic"].Where(x => x["title"] != null && x["title"].ToString().Contains("Vikipedi")).Select(x => x["url"].ToString()).ToArray();
 

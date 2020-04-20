@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -31,7 +32,19 @@ namespace CommunicaptionBackend.Api {
                 pin = mainService.GeneratePin()
             });
         }
-        
+
+        [HttpGet("clearDb")] // --
+        public IActionResult ClearDb() {
+            mainService.ClearDb();
+            return Ok("ok");
+        }
+
+        [HttpPost("setDump")]
+        public IActionResult SetDump([FromBody] DumpWrapper dumpWrapper) {
+            mainService.SetDump(dumpWrapper);
+            return Ok("ok");
+        }
+
         [HttpGet("debugText")] 
         public IActionResult debugText(string fileName) {
             return File(System.IO.File.ReadAllBytes("texts / " + fileName), " .txt");
@@ -52,11 +65,7 @@ namespace CommunicaptionBackend.Api {
         [HttpGet("search")] // ??? 
         public IActionResult Search(string json)
         {
-            var result = mainService.getSearchResult(json);
-            return ActionResults.Json(new
-            {
-                result
-            });
+            return ActionResults.Json(mainService.getSearchResult(json));
         }
 
         [HttpGet("gallery")] // calismiyor
@@ -196,4 +205,12 @@ namespace CommunicaptionBackend.Api {
             return Ok(mainService.TrainDebug());
         }
     }
+}
+
+public class DumpWrapper {
+    public List<MediaEntity> Medias { get; set; }
+    public List<SettingsEntity> Settings { get; set; }
+    public List<TextEntity> Texts { get; set; }
+    public List<ArtEntity> Arts { get; set; }
+    public List<string> MediaBase64 { get; set; }
 }
