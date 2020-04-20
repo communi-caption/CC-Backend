@@ -285,7 +285,7 @@ namespace CommunicaptionBackend.Api {
         }
 
         public int[] Recommend(int userId, int baseArtId) {
-            return new int[] { 1 };
+            //return new int[] { 1 };
             var artTitle = mainContext.Arts.FirstOrDefault(x => x.Id == baseArtId)?.Title;
             if (artTitle == null) artTitle = ".";
 
@@ -332,7 +332,7 @@ namespace CommunicaptionBackend.Api {
 
         public async Task<string> GetWikipediaLink(string title)
         {
-            var response = await client.GetStringAsync($"https://app.zenserp.com/api/v2/search?apikey=33bf6160-82ae-11ea-b331-c350760a9587&q={title}&lr=lang_tr&hl=tr&location=Turkey&gl=tr");
+            var response = await client.GetStringAsync($"https://app.zenserp.com/api/v2/search?apikey=fb46f5f0-8307-11ea-9daa-ffc766f6d656&q={title}&lr=lang_tr&hl=tr&location=Turkey&gl=tr");
             var x = JObject.Parse(response);
             string[] result = x["organic"].Where(x => x["title"] != null && x["title"].ToString().Contains("Vikipedi")).Select(x => x["url"].ToString()).ToArray();
 
