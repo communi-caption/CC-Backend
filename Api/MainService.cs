@@ -77,12 +77,12 @@ namespace CommunicaptionBackend.Api {
             int[] recommedArr = Recommend(artInfo.UserId, artId);
             for (int i = 0; i < recommedArr.Length; i++)
             {
-                var artInf = mainContext.Arts.SingleOrDefault(x => x.Id == recommedArr[i]);
-                var mediaInfo = mainContext.Medias.SingleOrDefault(x => x.ArtId == artInf.Id);
+                var artInf = mainContext.Arts.FirstOrDefault(x => x.Id == recommedArr[i]);
+                var mediaInfo = mainContext.Medias.FirstOrDefault(x => x.ArtId == artInf.Id);
                 object obj = new
                 {
                     picture = "medias/"+ mediaInfo.Id,
-                    url = GetWikipediaLink(artInf.Title).Result
+                    url = artInf.link
                 };
 
                 recommendationsList.Add(obj);
@@ -91,12 +91,12 @@ namespace CommunicaptionBackend.Api {
             int[] recommedArrL = LocationBasedRecommendation(artInfo.Latitude, artInfo.Longitude);
             for (int i = 0; i < recommedArrL.Length; i++)
             {
-                var artInf = mainContext.Arts.SingleOrDefault(x => x.Id == recommedArrL[i]);
-                var mediaInfo = mainContext.Medias.SingleOrDefault(x => x.ArtId == artInf.Id);
+                var artInf = mainContext.Arts.FirstOrDefault(x => x.Id == recommedArrL[i]);
+                var mediaInfo = mainContext.Medias.FirstOrDefault(x => x.ArtId == artInf.Id);
                 object obj = new
                 {
                     picture = "medias/" + mediaInfo.Id,
-                    url = GetWikipediaLink(artInf.Title).Result
+                    url = artInf.link
                 };
                 recommendationsList.Add(obj);
             }
@@ -238,7 +238,7 @@ namespace CommunicaptionBackend.Api {
             Random rand = new Random();
             art.Latitude =(float)(rand.NextDouble());
             art.Longitude = (float)(rand.NextDouble());
-
+            art.link = GetWikipediaLink(artTitle).Result;
 
             mainContext.Arts.Add(art);
             mainContext.SaveChanges();
