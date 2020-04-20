@@ -69,7 +69,7 @@ namespace CommunicaptionBackend.Api {
 
             foreach (var textObject in textsRelatedToArt)
             {
-                ocrText += @"\n" +  textObject.Text;
+                ocrText += @" " +  textObject.Text;
             }
 
             List<object> recommendationsList = new List<object>();
@@ -77,8 +77,8 @@ namespace CommunicaptionBackend.Api {
             int[] recommedArr = Recommend(artInfo.UserId, artId);
             for (int i = 0; i < recommedArr.Length; i++)
             {
-                var artInf = mainContext.Arts.SingleOrDefault(x => x.Id == recommedArr[i]);
-                var mediaInfo = mainContext.Medias.SingleOrDefault(x => x.ArtId == artInf.Id);
+                var artInf = mainContext.Arts.FirstOrDefault(x => x.Id == recommedArr[i]);
+                var mediaInfo = mainContext.Medias.FirstOrDefault(x => x.ArtId == artInf.Id);
                 object obj = new
                 {
                     picture = "medias/"+ mediaInfo.Id,
@@ -91,8 +91,8 @@ namespace CommunicaptionBackend.Api {
             int[] recommedArrL = LocationBasedRecommendation(artInfo.Latitude, artInfo.Longitude);
             for (int i = 0; i < recommedArrL.Length; i++)
             {
-                var artInf = mainContext.Arts.SingleOrDefault(x => x.Id == recommedArrL[i]);
-                var mediaInfo = mainContext.Medias.SingleOrDefault(x => x.ArtId == artInf.Id);
+                var artInf = mainContext.Arts.FirstOrDefault(x => x.Id == recommedArrL[i]);
+                var mediaInfo = mainContext.Medias.FirstOrDefault(x => x.ArtId == artInf.Id);
                 object obj = new
                 {
                     picture = "medias/" + mediaInfo.Id,
@@ -120,9 +120,15 @@ namespace CommunicaptionBackend.Api {
 
         public string getSearchResult(string searchInputJson)
         {
-            var artList = luceneProcessor.getArtList(mainContext.Texts.ToList());
-            luceneProcessor.AddToTheIndex(artList);
-            return luceneProcessor.FetchResults(searchInputJson);
+            var searchRequest = JsonConvert.DeserializeObject<SearchRequest>(searchInputJson);
+            var keyw = searchRequest.keyword.ToLowerInvariant().Trim();
+
+            Console.Error.WriteLine(keyw);
+            Console.Error.WriteLine(JsonConvert.SerializeObject(mainContext.Texts.Select(x => x.Text.ToLowerInvariant()).ToList()));
+
+            var all = mainContext.Texts.Where(x => x.Text.ToLowerInvariant().Contains(keyw)).Select(x => new { x.ArtId, x.Text }).ToList();
+            Console.Error.WriteLine(JsonConvert.SerializeObject(all));
+            return JsonConvert.SerializeObject(all);
         }
 
         public List<object> GetMediaItems(int userId) {
@@ -279,6 +285,7 @@ namespace CommunicaptionBackend.Api {
         }
 
         public int[] Recommend(int userId, int baseArtId) {
+            return new int[] { 1 };
             var artTitle = mainContext.Arts.FirstOrDefault(x => x.Id == baseArtId)?.Title;
             if (artTitle == null) artTitle = ".";
 
@@ -325,6 +332,7 @@ namespace CommunicaptionBackend.Api {
 
         public async Task<string> GetWikipediaLink(string title)
         {
+            return "https://tr.wikipedia.org/wiki/Vikipedi:Haftan%C4%B1n_se%C3%A7kin_maddesi";
             var response = await client.GetStringAsync($"https://app.zenserp.com/api/v2/search?apikey=bf36c2c0-8263-11ea-9b0f-6f1e52de7167&q={title}&lr=lang_tr&hl=tr&location=Turkey&gl=tr");
             var x = JObject.Parse(response);
             string[] result = x["organic"].Where(x => x["title"] != null && x["title"].ToString().Contains("Vikipedi")).Select(x => x["url"].ToString()).ToArray();
