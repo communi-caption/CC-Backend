@@ -379,7 +379,7 @@ namespace CommunicaptionBackend.Api {
 
         public async Task<string> GetWikipediaLink(string title)
         {
-            var response = await client.GetStringAsync($"https://app.zenserp.com/api/v2/search?apikey=84e54510-82ae-11ea-8e99-b9e63392392d&q={title}&lr=lang_tr&hl=tr&location=Turkey&gl=tr");
+            var response = await client.GetStringAsync($"https://app.zenserp.com/api/v2/search?apikey=fb46f5f0-8307-11ea-9daa-ffc766f6d656&q={title}&lr=lang_tr&hl=tr&location=Turkey&gl=tr");
             var x = JObject.Parse(response);
             string[] result = x["organic"].Where(x => x["title"] != null && x["title"].ToString().Contains("Vikipedi")).Select(x => x["url"].ToString()).ToArray();
 
