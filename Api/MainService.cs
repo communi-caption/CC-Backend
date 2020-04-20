@@ -108,6 +108,16 @@ namespace CommunicaptionBackend.Api {
             return objlist;
         }
 
+        public object Dump() {
+            return new {
+                Users = mainContext.Users.ToList(),
+                Medias = mainContext.Medias.ToList(),
+                Settings = mainContext.Settings.ToList(),
+                Texts = mainContext.Texts.ToList(),
+                Arts = mainContext.Arts.ToList(),
+            };
+        }
+
         public string getSearchResult(string searchInputJson)
         {
             var artList = luceneProcessor.getArtList(mainContext.Texts.ToList());

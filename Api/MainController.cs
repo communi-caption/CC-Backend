@@ -64,6 +64,11 @@ namespace CommunicaptionBackend.Api {
             return ActionResults.Json(mainService.GetGallery(userId));
         }
 
+        [HttpGet("dump")] // calismiyor
+        public IActionResult Dump() {
+            return ActionResults.Json(mainService.Dump());
+        }
+
         [HttpGet("mediaItems")] 
         public IActionResult GetMediaItems(int userId)
         {
