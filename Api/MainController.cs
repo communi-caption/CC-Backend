@@ -81,10 +81,7 @@ namespace CommunicaptionBackend.Api {
         [HttpGet("mediaItems")] 
         public IActionResult GetMediaItems(int userId)
         {
-            return ActionResults.Json(new
-            {
-                items = JsonConvert.SerializeObject(mainService.GetMediaItems(userId))
-            });
+            return ActionResults.Json(mainService.GetMediaItems(userId, true));
         }
 
         [HttpPost("pushMessage")]  
