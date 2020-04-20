@@ -216,7 +216,7 @@ namespace CommunicaptionBackend.Api {
                 var medias = mainContext.Medias.Where(x => x.ArtId == art.Id).ToArray();
                 var texts = mainContext.Texts.Where(x => x.ArtId == art.Id).ToArray();
 
-                byte[] picture = GetMediaData(medias.FirstOrDefault() + "");
+                byte[] picture = GetMediaData((medias.FirstOrDefault()?.Id ?? 0) + "");
                 string text = string.Join(" ", texts.Select(x => x.Text));
 
                 result.Add(new GalleryResponseItem {
