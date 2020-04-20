@@ -9,5 +9,6 @@ namespace CommunicaptionBackend.Entities {
         public string Title { get; set; }
         public float Latitude { get; set; }
         public float Longitude { get; set; }
+        public string link { get; set; }
     }
 }

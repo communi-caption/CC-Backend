@@ -82,7 +82,7 @@ namespace CommunicaptionBackend.Api {
                 object obj = new
                 {
                     picture = "medias/"+ mediaInfo.Id,
-                    url = GetWikipediaLink(artInf.Title).Result
+                    url = artInf.link
                 };
 
                 recommendationsList.Add(obj);
@@ -96,7 +96,7 @@ namespace CommunicaptionBackend.Api {
                 object obj = new
                 {
                     picture = "medias/" + mediaInfo.Id,
-                    url = GetWikipediaLink(artInf.Title).Result
+                    url = artInf.link
                 };
                 recommendationsList.Add(obj);
             }
@@ -244,7 +244,7 @@ namespace CommunicaptionBackend.Api {
             Random rand = new Random();
             art.Latitude =(float)(rand.NextDouble());
             art.Longitude = (float)(rand.NextDouble());
-
+            art.link = GetWikipediaLink(artTitle).Result;
 
             mainContext.Arts.Add(art);
             mainContext.SaveChanges();
