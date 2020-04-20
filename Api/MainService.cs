@@ -24,6 +24,7 @@ namespace CommunicaptionBackend.Api {
 
         private const string RECOMMENDER_HOST = "http://37.148.210.36:5005";
 
+      
         public MainService(MainContext mainContext, MessageProcessor messageProcessor, MessageQueue messageQueue, LuceneProcessor luceneProcessor) {
             this.mainContext = mainContext;
             this.messageProcessor = messageProcessor;
@@ -220,9 +221,14 @@ namespace CommunicaptionBackend.Api {
         }
 
         public int CreateArt(int userId, string artTitle) {
+
             var art = new ArtEntity();
             art.Title = artTitle;
             art.UserId = userId;
+            Random rand = new Random();
+            art.Latitude =(float)(rand.NextDouble());
+            art.Longitude = (float)(rand.NextDouble());
+
 
             mainContext.Arts.Add(art);
             mainContext.SaveChanges();

@@ -25,31 +25,31 @@ namespace CommunicaptionBackend.Api {
             return Ok("slm nbr?");
         }
 
-        [HttpGet("pin")]
+        [HttpGet("pin")] // --
         public IActionResult GeneratePin() {
             return ActionResults.Json(new {
                 pin = mainService.GeneratePin()
             });
         }
-
-        [HttpGet("debugMedia")]
-        public IActionResult DebugMedia(string fileName) {
-            return File(System.IO.File.ReadAllBytes("medias/" + fileName), "image/jpeg");
+        
+        [HttpGet("debugText")] 
+        public IActionResult debugText(string fileName) {
+            return File(System.IO.File.ReadAllBytes("texts / " + fileName), " .txt");
         }
 
-        [HttpGet("media")]
+        [HttpGet("media")] 
         public IActionResult GetMedia(int userId, string mediaId) {
             return File(mainService.GetMediaData(mediaId), "application/octet-stream");
         }
 
-        [HttpPost("getDetails")]
+        [HttpPost("getDetails")] //db gelince test et
         public IActionResult GetDetails(int artId)
         {
             var result = mainService.getDetails(artId);
             return ActionResults.Json(result);
         }
 
-        [HttpGet("search")]
+        [HttpGet("search")] // ??? 
         public IActionResult Search(string json)
         {
             var result = mainService.getSearchResult(json);
@@ -59,12 +59,12 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
-        [HttpGet("gallery")]
+        [HttpGet("gallery")] // calismiyor
         public IActionResult Gallery(int userId) {
             return ActionResults.Json(mainService.GetGallery(userId));
         }
 
-        [HttpGet("mediaItems")]
+        [HttpGet("mediaItems")] 
         public IActionResult GetMediaItems(int userId)
         {
             return ActionResults.Json(new
@@ -73,7 +73,7 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
-        [HttpPost("pushMessage")]
+        [HttpPost("pushMessage")]  
         public IActionResult PushMessage(int userId, [FromBody] Message message) {
             mainService.PushMessage(message);
 
@@ -82,7 +82,7 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
-        [HttpPost("saveMediaMessage")]
+        [HttpPost("saveMediaMessage")] 
         public IActionResult SaveMediaMessage([FromBody] SaveMediaMessage message) {
             mainService.PushMessage(message);
 
@@ -91,7 +91,7 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
-        [HttpPost("saveTextMessage")]
+        [HttpPost("saveTextMessage")] 
         public IActionResult SaveTextMessage([FromBody] SaveTextMessage message) {
             mainService.PushMessage(message);
 
@@ -100,7 +100,7 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
-        [HttpPost("saveSettingsMessage")]
+        [HttpPost("saveSettingsMessage")] 
         public IActionResult SaveSettings([FromBody] SettingsChangedMessage message) {
             mainService.PushMessage(message);
 
@@ -109,7 +109,7 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
-        [HttpGet("getSettings")]
+        [HttpGet("getSettings")] 
         public IActionResult GetSettings(int userId) {
             return new ContentResult {
                 Content = mainService.GetUserSettings(userId),
@@ -118,7 +118,7 @@ namespace CommunicaptionBackend.Api {
             };
         }
 
-        [HttpGet("getMessages")]
+        [HttpGet("getMessages")] 
         public IActionResult GetMessages(int userId)
         {
             if(!mainService.CheckUserExists(userId)) {
@@ -141,14 +141,14 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
-        [HttpGet("checkPairing")]
+        [HttpGet("checkPairing")] 
         public IActionResult CheckForPairing(string pin) {
             return ActionResults.Json(new {
                 userId = mainService.CheckForPairing(pin)
             });
         }
 
-        [HttpPost("connectWithHololens")]
+        [HttpPost("connectWithHololens")] 
         public IActionResult ConnectWithHololens(string pin) {
             int userId = mainService.ConnectWithHoloLens(pin);
 
@@ -164,7 +164,7 @@ namespace CommunicaptionBackend.Api {
             }
         }
 
-        [HttpPost("connectWithoutHololens")]
+        [HttpPost("connectWithoutHololens")] 
         public IActionResult ConnectWithoutHololens() {
             int userId = mainService.ConnectWithoutHoloLens();
             return ActionResults.Json(new {
@@ -172,7 +172,7 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
-        [HttpPost("createArt")]
+        [HttpPost("createArt")] 
         public IActionResult CreateArt(int userId, string artTitle) {
             int artId = mainService.CreateArt(userId, artTitle);
             return ActionResults.Json(new {
@@ -180,7 +180,7 @@ namespace CommunicaptionBackend.Api {
             });
         }
 
-        [HttpGet("triggerTrain")]
+        [HttpGet("triggerTrain")] //db gelince test et
         public IActionResult TriggerTrain() {
             mainService.TriggerTrain();
             return Ok("trained");
