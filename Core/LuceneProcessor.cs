@@ -103,6 +103,13 @@ namespace CommunicaptionBackend.Core
                     ArtId = foundDoc.Get("artId"), Text = HighlightText(searchRequest.keyword, foundDoc.Get("text"))
                 });     
             }
+            Console.Error.WriteLine("---");
+            Console.Error.WriteLine(hits.Length);
+            Console.Error.WriteLine("---");
+            Console.Error.WriteLine(json);
+            Console.Error.WriteLine("---");
+            Console.Error.WriteLine(JsonConvert.SerializeObject(resultList));
+            Console.Error.WriteLine("---");
             return JsonConvert.SerializeObject(resultList);
         }
 

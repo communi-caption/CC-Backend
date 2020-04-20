@@ -65,7 +65,7 @@ namespace CommunicaptionBackend.Api {
             var textsRelatedToArt = mainContext.Texts.Where(x => x.ArtId == artId).ToList();
             string ocrText = "";
 
-            var wiki = GetWikipediaLink(artInfo.Title).Result; //temprorary
+            var wiki = artInfo.link;
 
             foreach (var textObject in textsRelatedToArt)
             {
@@ -332,8 +332,7 @@ namespace CommunicaptionBackend.Api {
 
         public async Task<string> GetWikipediaLink(string title)
         {
-            return "https://tr.wikipedia.org/wiki/Vikipedi:Haftan%C4%B1n_se%C3%A7kin_maddesi";
-            var response = await client.GetStringAsync($"https://app.zenserp.com/api/v2/search?apikey=bf36c2c0-8263-11ea-9b0f-6f1e52de7167&q={title}&lr=lang_tr&hl=tr&location=Turkey&gl=tr");
+            var response = await client.GetStringAsync($"https://app.zenserp.com/api/v2/search?apikey=33bf6160-82ae-11ea-b331-c350760a9587&q={title}&lr=lang_tr&hl=tr&location=Turkey&gl=tr");
             var x = JObject.Parse(response);
             string[] result = x["organic"].Where(x => x["title"] != null && x["title"].ToString().Contains("Vikipedi")).Select(x => x["url"].ToString()).ToArray();
 
