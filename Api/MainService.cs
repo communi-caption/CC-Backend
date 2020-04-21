@@ -160,13 +160,9 @@ namespace CommunicaptionBackend.Api {
         }
 
         public object getSearchResult(string searchInputJson) {
-            var searchRequest = JsonConvert.DeserializeObject<SearchRequest>(searchInputJson);
-            var keyw = searchRequest.keyword.ToLowerInvariant().Trim();
-
-            Console.Error.WriteLine(keyw);
-            Console.Error.WriteLine(JsonConvert.SerializeObject(mainContext.Texts.Select(x => x.Text.ToLowerInvariant()).ToList()));
-
-            return mainContext.Texts.Where(x => x.Text.ToLowerInvariant().Contains(keyw)).Select(x => new { x.ArtId, x.Text }).ToList();
+            var artList = luceneProcessor.getArtList(mainContext.Texts.ToList());
+            luceneProcessor.AddToTheIndex(artList);
+            return luceneProcessor.FetchResults(searchInputJson);
         }
 
         public List<object> GetMediaItems(int userId, bool onlyHoloLens) {
