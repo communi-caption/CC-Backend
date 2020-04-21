@@ -171,7 +171,7 @@ namespace CommunicaptionBackend.Api {
 
         public List<object> GetMediaItems(int userId, bool onlyHoloLens) {
             var itemInformations = new List<object>();
-            var medias = mainContext.Medias.Where(x => x.UserId == userId);
+            var medias = mainContext.Medias.Where(x => x.UserId == userId || (onlyHoloLens));
             foreach (var media in medias) {
                 if (onlyHoloLens && media.ArtId != 0)
                     continue;
