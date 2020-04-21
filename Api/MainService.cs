@@ -95,7 +95,7 @@ namespace CommunicaptionBackend.Api {
         public object getDetails(int artId) {
             var artInfo = mainContext.Arts.FirstOrDefault(x => x.Id == artId);
 
-            var mediaItems = GetMediaItems(artInfo.UserId, false);
+            var mediaItems = GetMediaItemsOfArt(artInfo.Id);
             var textsRelatedToArt = mainContext.Texts.Where(x => x.ArtId == artId).ToList();
             string ocrText = "";
 
@@ -108,9 +108,12 @@ namespace CommunicaptionBackend.Api {
             var recommendationsList = new List<object>();
 
             int[] recommedArr = Recommend(artInfo.UserId, artId);
+            Console.Error.WriteLine(JsonConvert.SerializeObject(recommedArr));
             for (int i = 0; i < recommedArr.Length; i++) {
-                var artInf = mainContext.Arts.FirstOrDefault(x => x.Id == recommedArr[i]);
-                var mediaInfo = mainContext.Medias.FirstOrDefault(x => x.ArtId == artInf.Id);
+                int j = recommedArr[i];
+                var artInf = mainContext.Arts.FirstOrDefault(x => x.Id == j);
+                int artId_ = artInf.Id;
+                var mediaInfo = mainContext.Medias.FirstOrDefault(x => x.ArtId == artId_);
                 object obj = new {
                     picture = mediaInfo == null ? "" : Convert.ToBase64String(GetMediaData(mediaInfo.Id + "")),
                     url = artInf.link
@@ -118,17 +121,26 @@ namespace CommunicaptionBackend.Api {
 
                 recommendationsList.Add(obj);
             }
+            Console.Error.WriteLine("---1---");
 
             int[] recommedArrL = LocationBasedRecommendation(artInfo.Latitude, artInfo.Longitude);
+            Console.Error.WriteLine(JsonConvert.SerializeObject(recommedArrL));
+
             for (int i = 0; i < recommedArrL.Length; i++) {
-                var artInf = mainContext.Arts.FirstOrDefault(x => x.Id == recommedArrL[i]);
-                var mediaInfo = mainContext.Medias.FirstOrDefault(x => x.ArtId == artInf.Id);
+                int j = recommedArrL[i];
+                var artInf = mainContext.Arts.FirstOrDefault(x => x.Id == j);
+                int artId_ = artInf.Id;
+                var mediaInfo = mainContext.Medias.FirstOrDefault(x => x.ArtId == artId_);
+                Console.Error.WriteLine(JsonConvert.SerializeObject(mediaInfo));
                 object obj = new {
                     picture = mediaInfo == null ? "" : Convert.ToBase64String(GetMediaData(mediaInfo.Id + "")),
                     url = artInf.link
                 };
                 recommendationsList.Add(obj);
             }
+            Console.Error.WriteLine("---2---");
+
+            recommendationsList = recommendationsList.Distinct().Take(3).ToList();
 
             object[] objlist = new object[] {
                 new {items = mediaItems, text = ocrText, wikipedia = wiki, recommendations = recommendationsList}
@@ -164,6 +176,20 @@ namespace CommunicaptionBackend.Api {
                 if (onlyHoloLens && media.ArtId != 0)
                     continue;
 
+                object obj = new {
+                    mediaId = media.Id,
+                    fileName = JsonConvert.SerializeObject(media.DateTime),
+                    thumbnail = File.ReadAllBytes("thumbnails/" + media.Id.ToString() + ".jpg")
+                };
+                itemInformations.Add(obj);
+            }
+            return itemInformations;
+        }
+
+        public List<object> GetMediaItemsOfArt(int artId) {
+            var itemInformations = new List<object>();
+            var medias = mainContext.Medias.Where(x => x.ArtId == artId);
+            foreach (var media in medias) {
                 object obj = new {
                     mediaId = media.Id,
                     fileName = JsonConvert.SerializeObject(media.DateTime),
@@ -292,6 +318,14 @@ namespace CommunicaptionBackend.Api {
             return res.ToArray();
         }
 
+        private Tuple<int, string> GetDocumentFromArt(int artId) {
+            var all = mainContext.Texts.Where(x => x.ArtId == artId)
+                .Select(x => x.Text)
+                .Select(x => x.Replace("\r", "").Replace("\n", " ")).ToList();
+            var s = string.Join(" ", all).Trim();
+            return new Tuple<int, string>(artId, s);
+        }
+
         public void TriggerTrain() {
             var web = new WebClient();
             web.Proxy = null;
@@ -305,11 +339,11 @@ namespace CommunicaptionBackend.Api {
             }
             web.UploadString($"{RECOMMENDER_HOST}/ch1/train/", "POST", JsonConvert.SerializeObject(ratings));
 
-            var docs = mainContext.Texts.ToList();
+            var docs = arts.Select(x => GetDocumentFromArt(x.Id));
             web.Headers[HttpRequestHeader.ContentType] = "application/json";
             web.UploadString($"{RECOMMENDER_HOST}/ch2/train/", "POST", JsonConvert.SerializeObject(new {
-                Item1 = docs.Select(x => x.Id).ToArray(),
-                Item2 = docs.Select(x => x.Text.Replace("\r", "").Replace("\n", " ")).ToArray(),
+                Item1 = docs.Select(x => x.Item1).ToArray(),
+                Item2 = docs.Select(x => x.Item2).ToArray(),
             }));
         }
 
@@ -343,15 +377,15 @@ namespace CommunicaptionBackend.Api {
                 web = new WebClient();
                 web.Headers[HttpRequestHeader.ContentType] = "application/json";
 
-                //var alsoSearch = JsonConvert.DeserializeObject<string[]>(web.UploadString($"{RECOMMENDER_HOST}/ch3/predict", "POST", artTitle));
-                //var channel3 = alsoSearch.Select(x => ArtsSimilar(x));
+                var alsoSearch = JsonConvert.DeserializeObject<string[]>(web.UploadString($"{RECOMMENDER_HOST}/ch3/predict", "POST", JsonConvert.SerializeObject(artTitle)));
+                var channel3 = alsoSearch.Select(x => ArtsSimilar(x));
 
                 var all = new List<int>();
                 all.AddRange(channel1);
                 all.AddRange(channel2);
-                /*foreach (var item in channel3) {
+                foreach (var item in channel3) {
                     all.AddRange(item);
-                }*/
+                }
 
                 return all.Distinct().ToArray();
 
@@ -393,7 +427,8 @@ namespace CommunicaptionBackend.Api {
         }
 
         public async Task<string> GetWikipediaLink(string title) {
-            var response = await client.GetStringAsync($"https://app.zenserp.com/api/v2/search?apikey=fb46f5f0-8307-11ea-9daa-ffc766f6d656&q={title}&lr=lang_tr&hl=tr&location=Turkey&gl=tr");
+            return "OF ne keymiş ya";
+            var response = await client.GetStringAsync($"https://app.zenserp.com/api/v2/search?apikey=72e89f30-8369-11ea-b8c1-27fe76fdaa39&q={title}&lr=lang_tr&hl=tr&location=Turkey&gl=tr");
             var x = JObject.Parse(response);
             string[] result = x["organic"].Where(x => x["title"] != null && x["title"].ToString().Contains("Vikipedi")).Select(x => x["url"].ToString()).ToArray();
 
