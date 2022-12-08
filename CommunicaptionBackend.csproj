@@ -13,7 +13,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
     <PackageReference Include="NEST" Version="7.6.1" />
-    <PackageReference Include="newtonsoft.json" Version="12.0.3" />
+    <PackageReference Include="newtonsoft.json" Version="13.0.2" />
     <PackageReference Include="Xabe.FFmpeg" Version="3.6.1" />
   </ItemGroup>
 
